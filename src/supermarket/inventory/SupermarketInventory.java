@@ -22,15 +22,19 @@ public class SupermarketInventory {
 
             switch (mainChoice) {
                 case 1:
+                    //****************CALL OUT 
                     System.out.println("You selected Inventory management");
                     break;
                 case 2:
+                    //****************CALL OUT 
                     System.out.println("You selected Purchase Order");
                     break;
                 case 3:
+                    //****************CALL OUT 
                     System.out.println("You selected Delivery");
                     break;
                 case 4:
+                    //****************CALL OUT 
                     System.out.println("You selected Edit Supplier");
                     break;
                 case 5:
