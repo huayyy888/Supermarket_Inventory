@@ -2,13 +2,26 @@ package supermarket.inventory;
 import java.util.Scanner;
 
 public class SupermarketInventory {
+    
     public static void main(String[] args) {
+       int kickCount = 0;
        Scanner scanner = new Scanner(System.in);
        
+       clearScreen();
        while (!login(scanner)) {
             System.out.println("Invalid username or password. Please try again.");
+            kickCount++;
+            if(kickCount == 5){
+                System.out.println("Bruteforce detected.. Exiting");
+                System.exit(-1);
+            }
         }
        
+       //DEBUGGING PERPOSE
+       System.exit(0);
+       ///////////////////
+       
+       clearScreen();
        int mainChoice;
         do {
             System.out.println("\nMain Menu:");
@@ -48,21 +61,35 @@ public class SupermarketInventory {
         scanner.close();
     }
     
-    public static boolean login(Scanner scanner) {
-        final String USERNAME = "admin001";
-        final String PASSWORD = "12345";
+    //Login process
+    public static boolean login(Scanner scanner) {       
+        System.out.print("Enter username (Press X to exit): ");
         
-        System.out.print("Enter username: ");
-        String username = scanner.next();
-
+        String username = scanner.nextLine();
+        if(Character.toUpperCase(username.charAt(0)) == 'X'){
+            System.out.println("Exited, Thank you");
+            System.exit(0);
+ 
+        }
         System.out.print("Enter password: ");
-        String password = scanner.next();
-
+        String password = scanner.nextLine();
+        
+        Admin admin = new Admin();
+        final String USERNAME = admin.getID();
+        final String PASSWORD = admin.getPass();
+        
         if (USERNAME.equals(username) && PASSWORD.equals(password)) {
             System.out.println("Login successful!");
             return true;
         } else {
             return false;
+        }
+    }
+    
+    //To print newlines and make code more organized
+    public static void clearScreen(){
+        for(int i =0;i<=10;i++){
+            System.out.println("\n");
         }
     }
 }
