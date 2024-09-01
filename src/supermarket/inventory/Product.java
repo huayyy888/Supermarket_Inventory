@@ -4,21 +4,17 @@
  */
 package supermarket.inventory;
 
-public class Product {
+public class Product extends Category{
 	private int prodID;
 	private String name;
-	private String description;
 	private double price;
 	private int qty;
 	
-	public Product() {
-		
-	}
-	
-	public Product(int prodID, String name, String description, double price, int qty) {
+	public Product(String catId, String catName, int prodID, String name, double price, int qty) {
+                super(catId,catName);
+                
 		this.prodID = prodID;
 		this.name = name;
-		this.description = description;
 		this.price = price;
 		this.qty = qty;
 	}
@@ -39,15 +35,7 @@ public class Product {
 		this.name = name;
 	}
 	
-	public String getDescription() {
-		return description;
-	}
-	
-	public void setDescription(String description) {
-		this.description = description;
-	}
-	
-	public double getPrice() {
+        public double getPrice() {
 		return price;
 	}
 	
@@ -63,13 +51,14 @@ public class Product {
 		this.qty = qty;
 	}
 	
-	public void print() {
-		System.out.println("-------------------------");
-		System.out.println("ID:\t\t"+getID());
-		System.out.println("Name:\t\t"+getName());
-		System.out.println("Description:\t"+getDescription());
-		System.out.println("Price:\t\t"+getPrice()+"$");
-		System.out.println("Qty:\t\t"+getID());
-	}
+        
+        public String toString() {
+            return "-------------------------\n" +
+           "ID:\t\t" + getID() + "\n" +
+           "Name:\t\t" + getName() + "\n" +
+           "Price:\t\t" + getPrice() + "$\n" +
+           "Qty:\t\t" + getID() + "\n";
+}
+        
 
 }

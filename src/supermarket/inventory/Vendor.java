@@ -54,13 +54,10 @@ public class Vendor {
     public void setAddress(String address) {
         this.address = address;
     }
-
-    public void displayVendorInfo() {
-        System.out.println("Vendor ID: " + vendorID);
-        System.out.println("Name: " + name);
-        System.out.println("Contact Number: " + contactNumber);
-        System.out.println("Email: " + email);
-        System.out.println("Address: " + address);
+    
+    
+    public String toString() {
+        return String.format("Vendor ID: %d\nName: %s\nContact Number: %s\nEmail: %s\nAddress: %s", vendorID, name, contactNumber, email, address);
     }
 }
 

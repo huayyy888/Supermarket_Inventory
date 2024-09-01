@@ -29,19 +29,12 @@ public class Admin {
     
 // Static block to initialize ID and password from the file
  static {
-        Scanner scanner = new Scanner(System.in);
         File file = new File("admin.txt");
 
         // Check if the file exists; if not, create and initialize it
-        if (!file.exists()) {
-            initializeFile(file);
-        }
-
         // Attempt to read the file
         if (!readFromFile(file)) {
-            System.out.println("No login file found! Initialising with default values...");
-            System.out.println("Press any key to continue...");
-            scanner.next(); 
+            System.out.println("Initialising with default values...");
             // If reading fails or file content is incorrect, initialize the file again
             initializeFile(file);
             readFromFile(file);  // Attempt to read again after reinitialization
@@ -49,23 +42,21 @@ public class Admin {
     }
  
 
-    // Method to read ID and password from the file
-    private static boolean readFromFile(File file) {
+    // Method to read ID and password from the file          
+    private static boolean readFromFile(File file) {     //File file = new File("admin.txt");
         boolean success = false;
         try (BufferedReader reader = new BufferedReader(new FileReader(file))) {
             String line;
-            while ((line = reader.readLine()) != null) {
-                if (line.startsWith("id:")) {
-                    id = line.split(":")[1].trim();
-                } else if (line.startsWith("pass:")) {
+            while ((line = reader.readLine()) != null) {    //If EOF is encountered while reading a line, and the line is empty, NULL is returned
+                    id = line.split(":")[0].trim();
                     password = line.split(":")[1].trim();
-                }
             }
 
             // Check if both id and password were successfully read
             success = id != null && password != null;
         } catch (IOException e) {
-            e.printStackTrace();
+            System.out.println("File error!");
+            System.out.println(e.toString());  //prints the file exception, if exists.
         }
 
         return success;
@@ -75,10 +66,10 @@ public class Admin {
     private static void initializeFile(File file) {
         try (BufferedWriter writer = new BufferedWriter(new FileWriter(file))) {
             // Writing default ID and password to the file
-            writer.write("id:ganjungkook\n");
-            writer.write("pass:wxh3588\n");
+            writer.write("ganjungkook:3588\n");
         } catch (IOException e) {
-            e.printStackTrace();
+            System.out.println(e.toString());  //prints the file exception, if exists.
+            System.out.println("File error!");
         }
     }
 }
