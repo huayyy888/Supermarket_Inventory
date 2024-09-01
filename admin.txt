@@ -1,2 +1,1 @@
-id:ganjungkook
-pass:3588
+ganjungkook:3588
