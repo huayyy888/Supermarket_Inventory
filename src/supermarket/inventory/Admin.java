@@ -4,11 +4,12 @@
  */
 package supermarket.inventory;
 
-import java.util.Scanner;
-import java.io.BufferedReader;
+//import java.util.Scanner;
+//import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
-import java.io.FileReader;
+//import java.io.FileReader;
+import java.util.Scanner;
 import java.io.FileWriter;
 import java.io.IOException; //To handle errors
 
@@ -45,31 +46,36 @@ public class Admin {
     // Method to read ID and password from the file          
     private static boolean readFromFile(File file) {     //File file = new File("admin.txt");
         boolean success = false;
-        try (BufferedReader reader = new BufferedReader(new FileReader(file))) {
+        try (Scanner reader = new Scanner(file)) {
             String line;
-            while ((line = reader.readLine()) != null) {    //If EOF is encountered while reading a line, and the line is empty, NULL is returned
+            while ((reader.hasNextLine())) {    //method 2 to read file
+                    line = reader.nextLine();
                     id = line.split(":")[0].trim();
                     password = line.split(":")[1].trim();
             }
-
+            
             // Check if both id and password were successfully read
             success = id != null && password != null;
         } catch (IOException e) {
-            System.out.println("File error!");
+            System.out.println("Admin file error!");
             System.out.println(e.toString());  //prints the file exception, if exists.
         }
-
+        
         return success;
     }
-
+    
     // Method to initialize the file with default content
     private static void initializeFile(File file) {
-        try (BufferedWriter writer = new BufferedWriter(new FileWriter(file))) {
+        try (BufferedWriter writer = new BufferedWriter(new FileWriter(file))) { //BufferedWriter is almost similar to FileWriter but it uses internal buffer to write data into File
             // Writing default ID and password to the file
             writer.write("ganjungkook:3588\n");
         } catch (IOException e) {
             System.out.println(e.toString());  //prints the file exception, if exists.
             System.out.println("File error!");
         }
+    }
+    
+    public static void setAdmin(){
+     
     }
 }
