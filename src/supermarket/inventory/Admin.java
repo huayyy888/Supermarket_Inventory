@@ -68,7 +68,7 @@ public class Admin {
     private static void initializeFile(File file) {
         try (BufferedWriter writer = new BufferedWriter(new FileWriter(file))) { //BufferedWriter is almost similar to FileWriter but it uses internal buffer to write data into File
             // Writing default ID and password to the file
-            writer.write("ganjungkook:3588\n");
+            writer.write("admin:3588\n");
         } catch (IOException e) {
             System.out.println(e.toString());  //prints the file exception, if exists.
             System.out.println("File error!");
