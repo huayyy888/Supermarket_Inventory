@@ -14,7 +14,7 @@ public class SupermarketInventory {
        
        while (!login(scanner,admin)) {
             kickCount++;
-            System.out.printf("Login failed. %d attempt(s) left.\n",chances-kickCount);
+            System.out.printf("\u001B[31mLogin failed. %d attempt(s) left.\n\033[0m",chances-kickCount);
             if(kickCount == chances){
                 System.out.println("Exiting..");
                 System.exit(0);
@@ -23,14 +23,12 @@ public class SupermarketInventory {
        
         //Initialising values from file
         ArrayList<Category> catlist = Category.getCatList();
-        /////////////////
+        ArrayList<Product> prodList = Product.getProdList(catlist);   //retrive category data from catlist
+
+        clrs();
         do {
-            clrs();
-            System.out.println("===========================");
-            System.out.println("Login successfully as " + admin.getID() + "!");
-            System.out.println("Welcome to: Botitle Supermarket IMS:");
-            System.out.println("===========================");
-            System.out.println("1. Inventory management");
+            System.out.println("\u001B[33m"+"===========================\nLogin successfully as " + admin.getID() + "!\n"+"Welcome to: Botitle Supermarket IMS:\n==========================="+"\u001B[0m");
+            System.out.println("1. Inventory");
             System.out.println("2. Purchase Order");
             System.out.println("3. Delivery");
             System.out.println("4. Manage Supplier");
@@ -40,14 +38,16 @@ public class SupermarketInventory {
             //Error handling.
             try {
                 mainChoice = scanner.nextInt();
+                // consumes the dangling newline character
+                scanner.nextLine();
             } catch (InputMismatchException e) {
                 scanner.nextLine(); // Consume the invalid input   
             }   
+            clrs();
             switch (mainChoice) {
                 case 1:
                     //****************CALL OUT 
-                    System.out.println("You selected Inventory/Product Management");
-                    invMenu(scanner,catlist);
+                    invMenu(scanner,catlist,prodList);
                     break;
                 case 2:
                     //****************CALL OUT 
@@ -68,14 +68,66 @@ public class SupermarketInventory {
                     System.out.println("Admin Settings...");
                     break;
                 default:
-                   System.out.println("Invalid choice! try again.");
+                    System.out.println("\u001B[31m"+"Invalid choice!"+"\033[0m");
             }
         } while (mainChoice != 5);
 
         scanner.close();
     }
     
-    //Login process
+    
+    public static void invMenu(Scanner scanner,ArrayList<Category> catlist,ArrayList<Product> prodList){
+        clrs();
+        int choice;
+        do{
+            choice = 0;
+            System.out.println("\u001B[33m"+"=========================\n\tInventory\n========================="+"\u001B[0m");
+            System.out.println("1. Add Product Category");
+            System.out.println("2. View Product Categories");
+            System.out.println("3. Add a New Product");
+            System.out.println("4. View Products");
+            System.out.println("5. Return to main menu");
+        
+            System.out.print("-> ");
+            try {
+                    choice = scanner.nextInt();
+                        // consumes the dangling newline character
+                    scanner.nextLine();
+                } catch (InputMismatchException e) {
+                    scanner.nextLine(); // Consume the invalid input   
+                }
+            clrs();
+            switch (choice) {
+                    case 3:
+                        //****************CALL OUT 
+                        Product.createNewProduct(scanner, catlist);
+                        clrs();
+                        break;
+                    case 2:
+                        Category.dislayList(catlist);
+                        System.out.println("Press enter to continue..");                        
+                        scanner.nextLine();
+                        clrs();
+                        break;
+                    case 1:
+                        Category.addCat(scanner,catlist);
+                        clrs();
+                        break;
+                    case 4:
+                        Product.displayProd(prodList);
+                        System.out.println("Press enter to continue..");                        
+                        scanner.nextLine();
+                        clrs();
+                        break;
+                    case 5:
+                        return;
+                    default:
+                        System.out.println("\u001B[31m"+"Invalid choice!"+"\033[0m");
+            }
+        }while(choice != 5);
+    }
+
+//Login process
     public static boolean login(Scanner scanner, Admin admin) {       
         System.out.print("Enter username (Press X to exit): ");
         
@@ -102,41 +154,6 @@ public class SupermarketInventory {
     //System.out.print("\033c"); ///Clear screen in console cmd
     }
     
-    public static void invMenu(Scanner scanner,ArrayList<Category> catlist){
-        int choice;
-        
-        do{
-            clrs();
-            choice = 0;
-            System.out.println("======================\nInventory\n======================");
-            System.out.println("1. Add Product Category");
-            System.out.println("2. View Product Categories");
-            System.out.println("3. DEBUG: ADD category");
-            System.out.println("5. Return to main menu");
-        
-            System.out.print("->");
-            try {
-                    choice = scanner.nextInt();
-                } catch (InputMismatchException e) {
-                    scanner.nextLine(); // Consume the invalid input   
-                }
-            switch (choice) {
-                    case 3:
-                        //****************CALL OUT 
-                        Category.writeDebug();
-                        break;
-                    case 2:
-                        Category.dislayList(catlist);
-                        System.out.println("Press enter to continue..");                        
-                        scanner.nextLine();
-                        scanner.nextLine();
-                        break;
-                    case 1:
-                        Category.addCat(scanner,catlist);
-                    default:
-                        System.out.println("Invalid choice!");
-            }
-        }while(choice != 5);
-    }
-    
+
 }
+
