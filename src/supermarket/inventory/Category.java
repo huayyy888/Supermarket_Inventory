@@ -67,7 +67,7 @@ public class Category {
 
    }
     
-   public static void dislayList(ArrayList<Category> catlist){
+   public static void displayList(ArrayList<Category> catlist){
        System.out.println("\u001B[33m--LIST OF CATEGORIE(S)--\u001B[0m");
        System.out.println("ID\tName\n==================");
        for(Category c : catlist){
@@ -173,21 +173,11 @@ public class Category {
        }
    }
 
-    // check numbers
-   /*public static Boolean checkCat(String string, int maxNum){ 
-       int numCount=0;
-       
-       if(string.length()!=maxNum){
-           return false;
-       }
-       else{
-           for (int i = 0; i < string.length(); i++) {
-                if (Character.isDigit(string.charAt(i))) {
-                    numCount++;
-                }
-           }
-           return numCount == maxNum; //must have 3 integers
-       }
+    
+   public static void manageCat(Scanner scanner, ArrayList<Category> catlist, ArrayList<Product> productList) {
+        System.out.println("\u001B[33m--MANAGE CATEGORIES--\u001B[0m");
+        for (int i = 0; i < catlist.size(); i++) {
+            System.out.println((i + 1) + ". " + catlist.get(i));
+        }
    }
-    */
 }
