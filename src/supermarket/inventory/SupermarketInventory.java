@@ -29,11 +29,10 @@ public class SupermarketInventory {
         do {
             System.out.println("\u001B[33m"+"===========================\nLogin successfully as " + admin.getID() + "!\n"+"Welcome to: Botitle Supermarket IMS:\n==========================="+"\u001B[0m");
             System.out.println("1. Inventory");
-            System.out.println("2. Purchase Order");
-            System.out.println("3. Delivery");
-            System.out.println("4. Manage Supplier");
+            System.out.println("2. Orders");
+            System.out.println("3. Suppliers");
+            System.out.println("4. Edit Admin Settings");
             System.out.println("5. Exit");
-            System.out.println("6. ADMIN SETUP");
             System.out.print("-> ");
             //Error handling.
             try {
@@ -55,19 +54,16 @@ public class SupermarketInventory {
                     break;
                 case 3:
                     //****************CALL OUT 
-                    System.out.println("You selected Delivery");
+                    System.out.println("You selected Supplier Management");
                     break;
                 case 4:
                     //****************CALL OUT 
-                    System.out.println("You selected Supplier Management");
+                    System.out.println("Edit Admin");
                     break;
-                case 5:
-                    System.out.println("Exiting program...");
-                    break;
-                case 6:
-                    System.out.println("Admin Settings...");
-                    break;
-                default:
+                case 5:        
+                    System.out.print("Thank you for using Botitle IMS!");
+                    break;         
+                default:    
                     System.out.println("\u001B[31m"+"Invalid choice!"+"\033[0m");
             }
         } while (mainChoice != 5);
@@ -82,11 +78,17 @@ public class SupermarketInventory {
         do{
             choice = 0;
             System.out.println("\u001B[33m"+"=========================\n\tInventory\n========================="+"\u001B[0m");
+            System.out.println("<-Categories->");
             System.out.println("1. Add Product Category");
             System.out.println("2. View Product Categories");
-            System.out.println("3. Add a New Product");
-            System.out.println("4. View Products");
-            System.out.println("5. Return to main menu");
+            System.out.println("3. Edit a Category");
+            
+            System.out.println("\n<-Products->");
+            System.out.println("4. Add a New Product");
+            System.out.println("5. View Products");
+            System.out.println("6. Delete a Product");
+            System.out.println("7. Edit a Product");
+            System.out.println("\n?. Return to main menu");
         
             System.out.print("-> ");
             try {
@@ -98,33 +100,47 @@ public class SupermarketInventory {
                 }
             clrs();
             switch (choice) {
-                    case 3:
-                        //****************CALL OUT 
-                        Product.createNewProduct(scanner, catlist);
-                        clrs();
-                        break;
-                    case 2:
-                        Category.dislayList(catlist);
-                        System.out.println("Press enter to continue..");                        
-                        scanner.nextLine();
-                        clrs();
-                        break;
-                    case 1:
-                        Category.addCat(scanner,catlist);
-                        clrs();
-                        break;
-                    case 4:
-                        Product.displayProd(prodList);
-                        System.out.println("Press enter to continue..");                        
-                        scanner.nextLine();
-                        clrs();
-                        break;
-                    case 5:
-                        return;
-                    default:
-                        System.out.println("\u001B[31m"+"Invalid choice!"+"\033[0m");
+            //CATEGORY
+            case 1:
+                Category.addCat(scanner, catlist);
+                clrs();
+                break;
+            case 2:
+                Category.displayList(catlist);
+                System.out.println("Press enter to continue..");
+                scanner.nextLine();
+                clrs();
+                break;
+            case 3:
+                Category.manageCat(scanner,catlist,prodList);
+                break;
+            //PRODUCT
+            case 4:
+                Product.createNewProduct(scanner, catlist);
+                scanner.nextLine();
+                clrs();
+                break;
+            case 5:
+                Product.displayProd(prodList);
+                System.out.println("Press enter to continue..");
+                scanner.nextLine();
+                clrs();
+                break;
+            case 6:
+                Product.deleteProd(prodList);
+                clrs();
+                break;
+            case 7:
+                Product.editProdMenu(scanner,prodList,catlist);
+                clrs();
+                break;
+            
+            case 10:
+                return;
+            default:
+                System.out.println("\u001B[31m"+"Invalid choice!"+"\033[0m");
             }
-        }while(choice != 5);
+        }while(choice != 10);
     }
 
 //Login process
@@ -133,7 +149,7 @@ public class SupermarketInventory {
         
         String username = scanner.nextLine();
         if(username.length()!=0 &&(Character.toUpperCase(username.charAt(0)) == 'X')){
-            System.out.println("Exited, Thank you");
+            System.out.println("Exiting...");
             System.exit(0);
  
         }
