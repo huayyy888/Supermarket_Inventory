@@ -61,7 +61,7 @@ public class SupermarketInventory {
                     System.out.println("Edit Admin");
                     break;
                 case 5:        
-                    System.out.print("Thank you for using Botitle IMS!");
+                    System.out.println("Thank you for using Botitle IMS!");
                     break;         
                 default:    
                     System.out.println("\u001B[31m"+"Invalid choice!"+"\033[0m");
@@ -81,7 +81,7 @@ public class SupermarketInventory {
             System.out.println("<-Categories->");
             System.out.println("1. Add Product Category");
             System.out.println("2. View Product Categories");
-            System.out.println("3. Edit a Category");
+            System.out.println("3. Edit/Delete Category");
             
             System.out.println("\n<-Products->");
             System.out.println("4. Add a New Product");
@@ -117,7 +117,6 @@ public class SupermarketInventory {
             //PRODUCT
             case 4:
                 Product.createNewProduct(scanner, catlist);
-                scanner.nextLine();
                 clrs();
                 break;
             case 5:

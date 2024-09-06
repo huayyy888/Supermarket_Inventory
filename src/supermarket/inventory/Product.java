@@ -83,12 +83,15 @@ public class Product extends Category{
         //CATEGORY SELECT
         int categoryChoice = -1;
         while (categoryChoice < 1 || categoryChoice > categories.size()) {
-            System.out.print("Enter the number corresponding to the category: ");
+            System.out.print("Enter the number corresponding to the category (0 to exit): ");
              try {
                 categoryChoice = scanner.nextInt();
                 // consumes the newline character
                 scanner.nextLine();
-                if(categoryChoice < 1 || categoryChoice > categories.size()){
+                if(categoryChoice == 0){
+                    return;
+                }
+                else if(categoryChoice < 1 || categoryChoice > categories.size()){
                     System.out.println("\u001B[31mPlease enter a valid NUMBER.\u001B[0m");
                 }                
             } catch (InputMismatchException e) {
@@ -164,7 +167,7 @@ public class Product extends Category{
                 writer.write(newProduct.getCatId() + ","+ productID + "," + productName + "," + productPrice + "," + productQty + "\n");
                 System.out.println("\u001B[32mNew product \"+ product +\"created and saved successfully!\u001B[0m");
             } catch (IOException e) {
-                System.out.println("\u001B[31m****File error! Check file***\u001B[0m");
+                System.out.println("\u001B[31mFile error! Check file\u001B[0m");
                 System.out.println(e.toString());  
             }
         } else {
@@ -198,11 +201,20 @@ public class Product extends Category{
                 // Print all products in this category
                 for (Product p : productList) {
                     if (p.getCatId().equals(categoryID)) {
+                        if(p.getQty()<=5){
+                        System.out.printf("%-10s %-20s %-10.2f \u001B[31m%-20d (Restock recommended)\u001B[0m\n",
+                                p.getID(),
+                                p.getName(),
+                                p.getPrice(),
+                                p.getQty());
+                        }
+                        else{
                         System.out.printf("%-10s %-20s %-10.2f %-10d\n",
                                 p.getID(),
                                 p.getName(),
                                 p.getPrice(),
                                 p.getQty());
+                        }
                     }
                 }
                 System.out.println(); //\n\n
@@ -238,7 +250,7 @@ public class Product extends Category{
             fReader.close();
         }
         catch(IOException | NumberFormatException e){
-            System.out.println("\u001B[31m****product.txt error! Check file***\u001B[0m");
+            System.out.println("\u001B[31mFile error! Check file\u001B[0m");
             System.out.println(e.toString());  //prints the file exception, if exists.
             System.exit(-1);
         }
@@ -255,7 +267,7 @@ public class Product extends Category{
             }
             System.out.println("\u001B[32mProduct file successfully updated!\u001B[0m");
         } catch (IOException e) {
-            System.out.println("\u001B[31m****product.txt error! Check file***\u001B[0m");
+            System.out.println("\u001B[31mproduct.txt error! Check file\u001B[0m");
             System.out.println(e.toString());  //prints the file exception, if exists.
         }
     }
@@ -263,10 +275,12 @@ public class Product extends Category{
     public static void deleteProd(ArrayList<Product> productList) {
     Scanner scanner = new Scanner(System.in);    
     do {
-        System.out.println("\n\n\u001B[33m--DELETE A PRODUCT--\u001B[0m\n");
+        System.out.println("\n\n\u001B[33m-- DELETE A PRODUCT --\u001B[0m\n");
+        System.out.println("\u001B[36mNOTE: Press Enter without input to return to menu.\u001B[0m");
         System.out.print("Enter the product number/ID to delete (e.g. 1234567): ");
         String prodID = scanner.nextLine().trim();
-
+        if(prodID.isEmpty())
+            return;     
         // Search for the product in the product list
         Product productToDelete = null;
         for (Product product : productList) {
@@ -301,8 +315,13 @@ public class Product extends Category{
     
     public static void editProdMenu(Scanner scanner,ArrayList<Product> productList, ArrayList<Category> categories) {
         do{
-            System.out.print("Enter a product number/ID (e.g. 1234567): ");
+            System.out.println("\n\n\u001B[33m-- EDIT A PRODUCT --\u001B[0m\n");           
+            System.out.println("NOTE: Press Enter without input to return to menu.");
+            System.out.print("Enter the product number/ID to edit(e.g. 1234567): ");
             String prodID = scanner.nextLine().trim();
+            if(prodID.isEmpty())
+                return;
+            
 
         // Search for the product in the product list
             Product prod = null;
@@ -316,15 +335,14 @@ public class Product extends Category{
                 System.out.println("\u001B[31mProduct not found! \u001B[0m");
             }else{
                 editProd(scanner,prod,categories);
-                System.out.print("\n\n\n" + prod);
+                //System.out.print("\n\n\n" + prod);
             }
             writeProd(productList); //The updated value is already inside
-            System.out.print("\nDo you want to try again? (yes/no, default is no): ");
-        }while(scanner.nextLine().trim().equalsIgnoreCase("yes"));
+            System.out.print("\nDo you want to try again? (y/n, default is n): ");
+        }while(scanner.nextLine().trim().equalsIgnoreCase("y"));
     }
     
     private static void editProd(Scanner scanner,Product product2Edit,ArrayList<Category> categories){
-        System.out.println("\n\n\u001B[33m--EDIT A PRODUCT--\u001B[0m\n");           
         int choice;
         boolean again;
         do{
@@ -403,6 +421,29 @@ public class Product extends Category{
                             System.out.println("\u001B[31mPlease enter a valid PRICE.\u001B[0m");
                         }
                     }
+                }
+                else if(choice == 4){
+                //SELECT QTY
+                    int productQty = -1;
+                    while (productQty < 0) {
+                        System.out.printf("Enter new quantity (current: %d unit(s)): ",product2Edit.getQty());
+                        try{
+                            productQty = scanner.nextInt();
+                            scanner.nextLine();
+                            if (productQty < 0) {
+                                System.out.println("\u001B[31mQuantity cannot be negative. Please try again.\u001B[0m");
+                            }
+                            else{ //its valid qty, set the qty to product
+                                product2Edit.setQty(productQty);
+                            }
+                        }
+                        
+                        catch(InputMismatchException e){
+                            scanner.nextLine(); // Consume the invalid input
+                            System.out.println("\u001B[31mPlease enter a valid QUANTITY.\u001B[0m");
+                        }
+                    }
+                    
                 }
                 else{
                     System.out.println("\u001B[31mPlease enter a VALID choice.\u001B[0m");
