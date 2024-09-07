@@ -30,7 +30,7 @@ public class SupermarketInventory {
             System.out.println("\u001B[33m"+"===========================\nLogin successfully as " + admin.getID() + "!\n"+"Welcome to: Botitle Supermarket IMS:\n==========================="+"\u001B[0m");
             System.out.println("1. Inventory");
             System.out.println("2. Orders");
-            System.out.println("3. Suppliers");
+            System.out.println("3. Vendors");
             System.out.println("4. Edit Admin Settings");
             System.out.println("5. Exit");
             System.out.print("-> ");
@@ -45,7 +45,6 @@ public class SupermarketInventory {
             clrs();
             switch (mainChoice) {
                 case 1:
-                    //****************CALL OUT 
                     invMenu(scanner,catlist,prodList);
                     break;
                 case 2:
@@ -54,7 +53,7 @@ public class SupermarketInventory {
                     break;
                 case 3:
                     //****************CALL OUT 
-                    System.out.println("You selected Supplier Management");
+                    vendorMenu(scanner,prodList);
                     break;
                 case 4:
                     //****************CALL OUT 
@@ -205,6 +204,64 @@ public class SupermarketInventory {
             default:
                 System.out.println("\u001B[31mInvalid choice!\033[0m");
         }
+    
+    public static void vendorMenu(Scanner scanner,ArrayList<Product> productList){
+        clrs();
+        int choice;
+        do{
+            choice = 0;
+            System.out.println("\u001B[33m"+"=========================\n\tVendor\n========================="+"\u001B[0m");
+            System.out.println("1. Add Vendor");
+            System.out.println("2. View Vendor List");
+            System.out.println("3. Edit/Delete Vendor");
+           
+        System.out.print("-> ");
+            try {
+                    choice = scanner.nextInt();
+                        // consumes the dangling newline character
+                    scanner.nextLine();
+                } catch (InputMismatchException e) {
+                    scanner.nextLine(); // Consume the invalid input   
+                }
+        clrs();
+        switch(choice){
+            case 1:
+                Product product1 = new Product("CT001","Seafood","8613345", "Grouper", 15.50, 20);
+                Product product2 = new Product("CT002","Fruits","7852666", "Avocado", 5.25, 50);
+                Product product3 = new Product("CT002","Fruits","8123003", "Banana", 3.60, 100);
+
+                // Create a few Supplier instances
+                Vendor vendor1 = new Vendor("S001", "FreshDairy Ltd.", "012-3456789", "info@freshdairy.com");
+                Vendor vendor2 = new Vendor("S002", "Bakery Supplies Co.", "013-9876543", "contact@bakeryco.com");
+
+                // Add products to suppliers
+                vendor1.addSuppliedProduct(product1); // FreshDairy supplies Milk
+                vendor1.addSuppliedProduct(product3); // FreshDairy supplies Eggs
+
+                vendor2.addSuppliedProduct(product2); // Bakery Supplies Co. supplies Bread
+
+                // Display Supplier details and their products
+                System.out.println("== SUPPLIER DETAILS AND PRODUCTS SUPPLIED ==");
+                System.out.println("\nSupplier 1:");
+                System.out.println(vendor1); // Prints supplier info
+                vendor1.displaySuppliedProducts(); // Prints products supplied by this supplier
+
+                System.out.println("Vendor 2:");
+                System.out.println(vendor2); // Prints supplier info
+                vendor2.displaySuppliedProducts(); // Prints products supplied by this supplier
+
+                // Demonstrating a supplier with no products
+                Vendor vendor3 = new Vendor("S003", "EmptySupplies Co.", "014-5558888", "empty@supplies.com");
+                System.out.println("Vendor 3 (No Products):");
+                System.out.println(vendor3); // Prints supplier info
+                vendor3.displaySuppliedProducts(); // This supplier has no products
+                break;
+            default:
+        }
+       
+        
+        }while(choice!=5);
+
     }
 }
 

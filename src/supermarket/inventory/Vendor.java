@@ -1,40 +1,40 @@
 package supermarket.inventory;
 
+import java.util.ArrayList;
+
 public class Vendor {
-    private String vendorID;
-    private String name;
+    private String vendorId;
+    private String vendorName;
     private String contactNumber;
     private String email;
-    private String address;
+    private ArrayList<Product> suppliedProducts;
+
     
-    public Vendor(String vendorID, String name, String contactNumber, String email, String address) {
-        this.vendorID = vendorID;
-        this.name = name;
+    public Vendor(String vendorID, String name, String contactNumber, String email) {
+        this.vendorId = vendorID;
+        this.vendorName = name;
         this.contactNumber = contactNumber;
         this.email = email;
-        this.address = address;
+        suppliedProducts = new ArrayList<Product>();
     }
 
-    public String getVendorID() {
-        return vendorID;
+    public String getVendorId() {
+        return vendorId;
+    }
+    public void setVendorId(String vendorId) {
+        this.vendorId = vendorId;
     }
 
-    public void setVendorID(String vendorID) {
-        this.vendorID = vendorID;
+    public String getVendorName() {
+        return vendorName;
     }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
+    public void setVendorName(String vendorName) {
+        this.vendorName = vendorName;
     }
 
     public String getContactNumber() {
         return contactNumber;
     }
-
     public void setContactNumber(String contactNumber) {
         this.contactNumber = contactNumber;
     }
@@ -42,22 +42,36 @@ public class Vendor {
     public String getEmail() {
         return email;
     }
-
     public void setEmail(String email) {
         this.email = email;
     }
 
-    public String getAddress() {
-        return address;
+    public ArrayList<Product> getSuppliedProducts() {
+        return suppliedProducts;
+    }
+    
+    public void addSuppliedProduct(Product product) {
+        this.suppliedProducts.add(product);
     }
 
-    public void setAddress(String address) {
-        this.address = address;
+    public void removeSuppliedProduct(Product product) {
+        this.suppliedProducts.remove(product); // Remove a product from the vendor’s list
     }
     
+    public void displaySuppliedProducts() {
+        if (suppliedProducts.isEmpty()) {
+            System.out.println(vendorName + " has no products!");
+        } else {
+            System.out.println("Products supplied by " + vendorName + ":");
+            for (Product product : suppliedProducts) {
+                System.out.println("- " + product.getName() + " (ID: " + product.getID() + ")");
+            }
+        }
+    }
     
     public String toString() {
-        return String.format("Vendor ID: %d\nName: %s\nContact Number: %s\nEmail: %s\nAddress: %s", vendorID, name, contactNumber, email, address);
+        return String.format("Vendor ID: %s\nName: %s\nContact: %s\nEmail: %s\nSupplied Products: %d",
+                vendorId, vendorName, contactNumber, email, suppliedProducts.size());
     }
 }
 
