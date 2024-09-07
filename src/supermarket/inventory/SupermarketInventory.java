@@ -186,7 +186,7 @@ public class SupermarketInventory {
             scanner.nextLine(); // Consume invalid input
             return;
         }
-
+        clrs();
         switch (choice) {
             case 1:
                 System.out.print("Enter new Admin ID: ");
