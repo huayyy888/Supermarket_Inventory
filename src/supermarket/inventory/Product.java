@@ -336,8 +336,8 @@ public class Product extends Category{
             }else{
                 editProd(scanner,prod,categories);
                 //System.out.print("\n\n\n" + prod);
+                writeProd(productList); //The updated value is already inside
             }
-            writeProd(productList); //The updated value is already inside
             System.out.print("\nDo you want to try again? (y/n, default is n): ");
         }while(scanner.nextLine().trim().equalsIgnoreCase("y"));
     }

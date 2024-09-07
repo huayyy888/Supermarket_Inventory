@@ -31,7 +31,6 @@ public class Admin {
 // Static block to initialize ID and password from the file
  static {
         File file = new File("admin.txt");
-
         // Check if the file exists; if not, create and initialize it
         // Attempt to read the file
         if (!readFromFile(file)) {
@@ -66,7 +65,7 @@ public class Admin {
     
     // Method to initialize the file with default content
     private static void initializeFile(File file) {
-        try (BufferedWriter writer = new BufferedWriter(new FileWriter(file))) { //BufferedWriter is almost similar to FileWriter but it uses internal buffer to write data into File
+        try (FileWriter writer = new FileWriter("admin.txt")) { //BufferedWriter is almost similar to FileWriter but it uses internal buffer to write data into File
             // Writing default ID and password to the file
             writer.write("admin:3588\n");
         } catch (IOException e) {

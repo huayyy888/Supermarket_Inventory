@@ -267,7 +267,7 @@ public class Category {
             }
             System.out.print("\n Do you wish to manage another category? (y/n, default no): ");
         }while(scanner.nextLine().trim().equalsIgnoreCase("y"));  
-        System.out.println("\n\n\n\n\n\n\n");
+        SupermarketInventory.clrs();
    }
    
    public static void writeCat(ArrayList<Category> catlist) {
