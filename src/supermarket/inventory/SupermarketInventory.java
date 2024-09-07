@@ -204,7 +204,7 @@ public class SupermarketInventory {
             default:
                 System.out.println("\u001B[31mInvalid choice!\033[0m");
         }
-    
+    }
     public static void vendorMenu(Scanner scanner,ArrayList<Product> productList){
         clrs();
         int choice;
