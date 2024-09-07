@@ -27,7 +27,9 @@ public class SupermarketInventory {
 
         clrs();
         do {
-            System.out.println("\u001B[33m"+"===========================\nLogin successfully as " + admin.getID() + "!\n"+"Welcome to: Botitle Supermarket IMS:\n==========================="+"\u001B[0m");
+            System.out.println("\u001B[33m"+"===========================\u001B[0m");
+            System.out.print("Login successfully as " +  String.format("\u001B[36m%s\u001B[0m", admin.getID())+ "!\nWelcome to: Botitle Supermarket IMS:\n");
+            System.out.println("\u001B[33m"+"===========================\u001B[0m");
             System.out.println("1. Inventory");
             System.out.println("2. Orders");
             System.out.println("3. Vendors");
@@ -170,40 +172,49 @@ public class SupermarketInventory {
 
     //----------------ADMIN----------------------------------
     public static void editAdminSettings(Scanner scanner, Admin admin) {
-        System.out.println("\u001B[33m" + "Edit Admin Settings" + "\u001B[0m");
-        System.out.println("1. Change Admin ID");
-        System.out.println("2. Change Password");
-        System.out.println("3. Return to Main Menu");
-
-        System.out.print("-> ");
-        int choice;
-        try {
-            choice = scanner.nextInt();
-            scanner.nextLine(); // Consume newline
-        } catch (InputMismatchException e) {
-            System.out.println("\u001B[31mInvalid input! Please enter a number.\033[0m");
-            scanner.nextLine(); // Consume invalid input
-            return;
-        }
         clrs();
-        switch (choice) {
-            case 1:
-                System.out.print("Enter new Admin ID: ");
-                String newId = scanner.nextLine();
-                admin.setAdminID(newId);
-                System.out.println("Admin ID updated successfully!");
-                break;
-            case 2:
-                System.out.print("Enter new Password: ");
-                String newPassword = scanner.nextLine();
-                admin.setAdminPassword(newPassword);
-                System.out.println("Password updated successfully!");
-                break;
-            case 3:
-                return;
-            default:
-                System.out.println("\u001B[31mInvalid choice!\033[0m");
-        }
+        int choice;
+        do{
+            choice = 0;
+            System.out.println("\u001B[33m" + "======================" + "\u001B[0m");
+            System.out.println("  Edit Admin Settings");
+            System.out.println("\u001B[33m" + "======================" + "\u001B[0m");
+            System.out.println("1. Change Admin ID");
+            System.out.println("2. Change Password");
+            System.out.println("3. Return to Main Menu");
+
+            System.out.print("-> ");
+
+            try {
+                choice = scanner.nextInt();
+                scanner.nextLine(); // Consume newline
+
+            clrs();
+            switch (choice) {
+                case 1:
+                    System.out.print("Enter new Admin ID: ");
+                    String newId = scanner.nextLine();
+                    admin.setAdminID(newId);
+                    clrs();
+                    System.out.println("\u001B[32mAdmin ID updated successfully!\u001B[0m");
+                    break;
+                case 2:
+                    System.out.print("Enter new Password: ");
+                    String newPassword = scanner.nextLine();
+                    admin.setAdminPassword(newPassword);
+                    System.out.println("\u001B[32mPassword updated successfully!\u001B[0m");
+                    break;
+                case 3:
+                    return;
+                default:
+                    System.out.println("\u001B[31mInvalid choice!\033[0m");
+                }
+            } catch (InputMismatchException e) {
+                clrs();
+                System.out.println("\u001B[31mInvalid input! Please enter a number.\033[0m");
+                scanner.nextLine(); // Consume invalid input
+            }
+        }while(choice != 3);
     }
     public static void vendorMenu(Scanner scanner,ArrayList<Product> productList){
         clrs();
