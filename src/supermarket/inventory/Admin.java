@@ -8,18 +8,26 @@ package supermarket.inventory;
 //import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
-//import java.io.FileReader;
-import java.util.Scanner;
 import java.io.FileWriter;
-import java.io.IOException; //To handle errors
+import java.io.IOException;
+import java.util.Scanner; //To handle errors
 
 /**
  *
  * @author KTYJ
  */
 public class Admin {    
-    private static String id,password;
-    
+    private static String id,password; 
+    public Admin() {
+       
+    }
+
+    //Constructor 
+    public Admin (String id,String password){
+        Admin.id=id;
+        Admin.password=password;
+    }
+   
     //Getter
     public String getID(){
         return Admin.id;
@@ -27,9 +35,20 @@ public class Admin {
     public String getPass(){
         return Admin.password;
     }
+
+    //setter 
+    public void setAdminID(String newId) {
+        this.id = newId;
+        saveToFile(); // Save the updated ID to the file
+    }
+
+    public  void setAdminPassword(String newPassword) {
+        this.password = newPassword;
+        saveToFile(); // Save the updated password to the file
+    }
     
-// Static block to initialize ID and password from the file
- static {
+    // Static block to initialize ID and password from the file
+    static {
         File file = new File("admin.txt");
 
         // Check if the file exists; if not, create and initialize it
@@ -74,8 +93,14 @@ public class Admin {
             System.out.println("File error!");
         }
     }
-    
-    public static void setAdmin(){
-     
+
+    private static void saveToFile() {
+        File file = new File("admin.txt");
+        try (BufferedWriter writer = new BufferedWriter(new FileWriter(file))) {
+            writer.write(id + ":" + password + "\n");
+        } catch (IOException e) {
+            System.out.println(e.toString());
+            System.out.println("File error while saving admin settings!");
+        }
     }
 }

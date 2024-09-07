@@ -8,8 +8,8 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Scanner;
 import java.util.InputMismatchException;
+import java.util.Scanner;
 
 public class Product extends Category{
 
@@ -61,7 +61,7 @@ public class Product extends Category{
 	}
 	
         
-       @Override
+       @Override 
        public String toString() {
         return String.format("%s\n" +
             "SKU\t:%s\n" +

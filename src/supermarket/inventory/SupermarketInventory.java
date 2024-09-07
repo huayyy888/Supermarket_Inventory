@@ -1,7 +1,7 @@
 package supermarket.inventory;
+import java.util.ArrayList;
 import java.util.InputMismatchException;
 import java.util.Scanner;
-import java.util.ArrayList;
 
 public class SupermarketInventory {
     
@@ -58,7 +58,7 @@ public class SupermarketInventory {
                     break;
                 case 4:
                     //****************CALL OUT 
-                    System.out.println("Edit Admin");
+                    editAdminSettings(scanner,admin);
                     break;
                 case 5:        
                     System.out.println("Thank you for using Botitle IMS!");
@@ -168,7 +168,47 @@ public class SupermarketInventory {
         }
     //System.out.print("\033c"); ///Clear screen in console cmd
     }
+
+    //----------------ADMIN----------------------------------
+    public static void editAdminSettings(Scanner scanner, Admin admin) {
+        System.out.println("\u001B[33m" + "Edit Admin Settings" + "\u001B[0m");
+        System.out.println("1. Change Admin ID");
+        System.out.println("2. Change Password");
+        System.out.println("3. Return to Main Menu");
+
+        System.out.print("-> ");
+        int choice;
+        try {
+            choice = scanner.nextInt();
+            scanner.nextLine(); // Consume newline
+        } catch (InputMismatchException e) {
+            System.out.println("\u001B[31mInvalid input! Please enter a number.\033[0m");
+            scanner.nextLine(); // Consume invalid input
+            return;
+        }
+
+        switch (choice) {
+            case 1:
+                System.out.print("Enter new Admin ID: ");
+                String newId = scanner.nextLine();
+                admin.setAdminID(newId);
+                System.out.println("Admin ID updated successfully!");
+                break;
+            case 2:
+                System.out.print("Enter new Password: ");
+                String newPassword = scanner.nextLine();
+                admin.setAdminPassword(newPassword);
+                System.out.println("Password updated successfully!");
+                break;
+            case 3:
+                return;
+            default:
+                System.out.println("\u001B[31mInvalid choice!\033[0m");
+        }
+    }
+}
+
+    
     
 
-}
 
