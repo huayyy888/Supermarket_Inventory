@@ -226,9 +226,8 @@ public class Product extends Category{
     public static ArrayList<Product> getProdList( ArrayList<Category> catlist){
         ArrayList<Product> prodList = new ArrayList<>();
         
-        try{
+        try(Scanner fReader = new Scanner(new File("product.txt"))){
             String line;
-            Scanner fReader = new Scanner(new File("product.txt"));
             while(fReader.hasNextLine()){
                 line = fReader.nextLine();
                 String[] prodData = line.split(",");
@@ -279,8 +278,10 @@ public class Product extends Category{
         System.out.println("\u001B[36mNOTE: Press Enter without input to return to menu.\u001B[0m");
         System.out.print("Enter the product number/ID to delete (e.g. 1234567): ");
         String prodID = scanner.nextLine().trim();
-        if(prodID.isEmpty())
+        if(prodID.isEmpty()){
+            scanner.close();
             return;     
+        }
         // Search for the product in the product list
         Product productToDelete = null;
         for (Product product : productList) {
@@ -311,6 +312,7 @@ public class Product extends Category{
         System.out.print("\nDo you want to try again? (yes/no, default is no): ");
         
     } while (scanner.nextLine().trim().equalsIgnoreCase("yes"));
+        scanner.close();
     }
     
     public static void editProdMenu(Scanner scanner,ArrayList<Product> productList, ArrayList<Category> categories) {
@@ -382,7 +384,7 @@ public class Product extends Category{
                     String categoryChoice = scanner.nextLine().trim();
                     if (!categoryChoice.isEmpty()) {
                         try {
-                            int catchoice = Integer.parseInt(categoryChoice);
+                            choice = Integer.parseInt(categoryChoice);
                             if (choice >= 1 && choice <= categories.size()) {
                                 Category newCategory = categories.get(choice - 1);
                                 product2Edit.setCatId(newCategory.getCatId());
