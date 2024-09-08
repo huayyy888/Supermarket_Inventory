@@ -15,7 +15,7 @@ public class Vendor {
         this.vendorName = name;
         this.contactNumber = contactNumber;
         this.email = email;
-        suppliedProducts = new ArrayList<Product>();
+        suppliedProducts = new ArrayList<>();
     }
 
     public String getVendorId() {
@@ -69,6 +69,7 @@ public class Vendor {
         }
     }
     
+    @Override
     public String toString() {
         return String.format("Vendor ID: %s\nName: %s\nContact: %s\nEmail: %s\nSupplied Products: %d",
                 vendorId, vendorName, contactNumber, email, suppliedProducts.size());

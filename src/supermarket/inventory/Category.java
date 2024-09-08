@@ -5,12 +5,11 @@
 package supermarket.inventory;
 
 import java.io.File;
-import java.util.ArrayList; // import the ArrayList class
-import java.util.Scanner; // Import the Scanner class to read text files
-import java.io.FileWriter;
-import java.io.IOException; //To handle errors
-import java.util.InputMismatchException;
-import supermarket.inventory.Product;
+import java.io.FileWriter; // import the ArrayList class
+import java.io.IOException; // Import the Scanner class to read text files
+import java.util.ArrayList;
+import java.util.InputMismatchException; //To handle errors
+import java.util.Scanner;
 
 /**
  *
@@ -47,9 +46,8 @@ public class Category {
     public static ArrayList<Category> getCatList(){
         ArrayList<Category> categories = new ArrayList<>();
         
-        try{
+        try(Scanner fReader = new Scanner(new File("cat.txt"))){
             String line;
-            Scanner fReader = new Scanner(new File("cat.txt"));
             while(fReader.hasNextLine()){
                 line = fReader.nextLine();
                 String catId = line.split(",")[0].trim();       //e.g CT:001,
@@ -57,7 +55,6 @@ public class Category {
                 categories.add(new Category(catId,name));
             }
             
-            fReader.close();
         }
         catch(IOException e){
             System.out.println("cat.txt error!");
@@ -83,7 +80,7 @@ public class Category {
     String id;
     System.out.println("\u001B[33m--ADD A CATEGORY--\u001B[0m");
     do {
-        boolean valid = true;
+        boolean valid;
         // Get valid category name
         do {
             System.out.println("\u001B[36mNOTE: Press Enter without input to return to menu.\u001B[0m");

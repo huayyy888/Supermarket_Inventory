@@ -5,12 +5,10 @@
 package supermarket.inventory;
 
 //import java.util.Scanner;
-//import java.io.BufferedReader;
-import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.util.Scanner; //To handle errors
+import java.util.Scanner;
 
 /**
  *
@@ -38,12 +36,12 @@ public class Admin {
 
     //setter 
     public void setAdminID(String newId) {
-        this.id = newId;
+        Admin.id = newId;
         saveToFile(); // Save the updated ID to the file
     }
 
     public  void setAdminPassword(String newPassword) {
-        this.password = newPassword;
+        Admin.password = newPassword;
         saveToFile(); // Save the updated password to the file
     }
     
@@ -84,7 +82,7 @@ public class Admin {
     
     // Method to initialize the file with default content
     private static void initializeFile(File file) {
-        try (FileWriter writer = new FileWriter("admin.txt")) { //BufferedWriter is almost similar to FileWriter but it uses internal buffer to write data into File
+        try (FileWriter writer = new FileWriter(file)) { //BufferedWriter is almost similar to FileWriter but it uses internal buffer to write data into File
             // Writing default ID and password to the file
             writer.write("admin:3588\n");
         } catch (IOException e) {
@@ -95,7 +93,7 @@ public class Admin {
 
     private static void saveToFile() {
         File file = new File("admin.txt");
-        try (BufferedWriter writer = new BufferedWriter(new FileWriter(file))) {
+        try (FileWriter writer = new FileWriter(file)) {
             writer.write(id + ":" + password + "\n");
         } catch (IOException e) {
             System.out.println(e.toString());

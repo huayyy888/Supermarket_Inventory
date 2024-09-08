@@ -50,8 +50,7 @@ public class SupermarketInventory {
                     invMenu(scanner,catlist,prodList);
                     break;
                 case 2:
-                    //****************CALL OUT 
-                    System.out.println("You selected Purchase Order");
+                    //****************CALL OUT
                     break;
                 case 3:
                     //****************CALL OUT 
@@ -221,7 +220,10 @@ public class SupermarketInventory {
         int choice;
         do{
             choice = 0;
-            System.out.println("\u001B[33m"+"=========================\n\tVendor\n========================="+"\u001B[0m");
+            System.out.println("""
+                               \u001b[33m=========================
+                               \tVendor
+                               =========================\u001b[0m""");
             System.out.println("1. Add Vendor");
             System.out.println("2. View Vendor List");
             System.out.println("3. Edit/Delete Vendor");
@@ -236,7 +238,7 @@ public class SupermarketInventory {
                 }
         clrs();
         switch(choice){
-            case 1:
+            case 1:/*
                 Product product1 = new Product("CT001","Seafood","8613345", "Grouper", 15.50, 20);
                 Product product2 = new Product("CT002","Fruits","7852666", "Avocado", 5.25, 50);
                 Product product3 = new Product("CT002","Fruits","8123003", "Banana", 3.60, 100);
@@ -267,11 +269,16 @@ public class SupermarketInventory {
                 System.out.println(vendor3); // Prints supplier info
                 vendor3.displaySuppliedProducts(); // This supplier has no products
                 break;
+                 */
             default:
         }
        
         
         }while(choice!=5);
+
+    }
+
+    public static void orderMenu(Scanner scanner,ArrayList<Product> productList){
 
     }
 }
