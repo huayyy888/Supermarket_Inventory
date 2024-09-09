@@ -11,7 +11,6 @@ public class SupermarketInventory {
        Admin admin = new Admin();       //Call a new admin
        Scanner scanner = new Scanner(System.in);
        
-       
        while (!login(scanner,admin)) {
             kickCount++;
             System.out.printf("\u001B[31mLogin failed. %d attempt(s) left.\n\033[0m",chances-kickCount);
@@ -27,9 +26,7 @@ public class SupermarketInventory {
 
         clrs();
         do {
-            System.out.println("\u001B[33m"+"===========================\u001B[0m");
-            System.out.print("Login successfully as " +  String.format("\u001B[36m%s\u001B[0m", admin.getID())+ "!\nWelcome to: Botitle Supermarket IMS:\n");
-            System.out.println("\u001B[33m"+"===========================\u001B[0m");
+            System.out.println("\u001B[33m"+"===========================\nLogin successfully as " + admin.getID() + "!\n"+"Welcome to: Botitle Supermarket IMS:\n==========================="+"\u001B[0m");
             System.out.println("1. Inventory");
             System.out.println("2. Orders");
             System.out.println("3. Vendors");
@@ -44,17 +41,18 @@ public class SupermarketInventory {
             } catch (InputMismatchException e) {
                 scanner.nextLine(); // Consume the invalid input   
             }   
+            
             clrs();
             switch (mainChoice) {
                 case 1:
                     invMenu(scanner,catlist,prodList);
                     break;
                 case 2:
-                    //****************CALL OUT
+                    //****************CALL OUT 
+                    System.out.println("You selected Purchase Order");
                     break;
                 case 3:
-                    //****************CALL OUT 
-                    vendorMenu(scanner,prodList);
+                    vendorMenu(scanner, null, prodList);
                     break;
                 case 4:
                     //****************CALL OUT 
@@ -169,7 +167,7 @@ public class SupermarketInventory {
     //System.out.print("\033c"); ///Clear screen in console cmd
     }
 
-    //----------------ADMIN----------------------------------
+    //----------------EDIT　ADMIN　Setting----------------------------------
     public static void editAdminSettings(Scanner scanner, Admin admin) {
         clrs();
         int choice;
@@ -215,18 +213,19 @@ public class SupermarketInventory {
             }
         }while(choice != 3);
     }
-    public static void vendorMenu(Scanner scanner,ArrayList<Product> productList){
+    
+    //----------------------Vendor Menu--------------------------
+    public static void vendorMenu(Scanner scanner,ArrayList<Vendor> vendor,ArrayList<Product> productList){
         clrs();
         int choice;
         do{
             choice = 0;
-            System.out.println("""
-                               \u001b[33m=========================
-                               \tVendor
-                               =========================\u001b[0m""");
+            System.out.println("\u001B[33m"+"=========================\n\tVendor\n========================="+"\u001B[0m");
             System.out.println("1. Add Vendor");
             System.out.println("2. View Vendor List");
-            System.out.println("3. Edit/Delete Vendor");
+            System.out.println("3. Edit Vendor");
+            System.out.println("4. Delete Vendor");
+            System.out.println("5. Return to Main Menu");
            
         System.out.print("-> ");
             try {
@@ -238,39 +237,20 @@ public class SupermarketInventory {
                 }
         clrs();
         switch(choice){
-            case 1:/*
-                Product product1 = new Product("CT001","Seafood","8613345", "Grouper", 15.50, 20);
-                Product product2 = new Product("CT002","Fruits","7852666", "Avocado", 5.25, 50);
-                Product product3 = new Product("CT002","Fruits","8123003", "Banana", 3.60, 100);
-
-                // Create a few Supplier instances
-                Vendor vendor1 = new Vendor("S001", "FreshDairy Ltd.", "012-3456789", "info@freshdairy.com");
-                Vendor vendor2 = new Vendor("S002", "Bakery Supplies Co.", "013-9876543", "contact@bakeryco.com");
-
-                // Add products to suppliers
-                vendor1.addSuppliedProduct(product1); // FreshDairy supplies Milk
-                vendor1.addSuppliedProduct(product3); // FreshDairy supplies Eggs
-
-                vendor2.addSuppliedProduct(product2); // Bakery Supplies Co. supplies Bread
-
-                // Display Supplier details and their products
-                System.out.println("== SUPPLIER DETAILS AND PRODUCTS SUPPLIED ==");
-                System.out.println("\nSupplier 1:");
-                System.out.println(vendor1); // Prints supplier info
-                vendor1.displaySuppliedProducts(); // Prints products supplied by this supplier
-
-                System.out.println("Vendor 2:");
-                System.out.println(vendor2); // Prints supplier info
-                vendor2.displaySuppliedProducts(); // Prints products supplied by this supplier
-
-                // Demonstrating a supplier with no products
-                Vendor vendor3 = new Vendor("S003", "EmptySupplies Co.", "014-5558888", "empty@supplies.com");
-                System.out.println("Vendor 3 (No Products):");
-                System.out.println(vendor3); // Prints supplier info
-                vendor3.displaySuppliedProducts(); // This supplier has no products
+            case 1:
+                Vendor.createNewVendor(scanner, vendor,productList);
                 break;
-                 */
+            case 2: 
+                Vendor.displayVendors(vendor);
+                break;
+            case 3: 
+                Vendor.editVendor(scanner, vendor);
+                break;
+            case 4: 
+                Vendor.deleteVendor(vendor);
+                break;
             default:
+            System.out.println("\u001B[31mInvalid choice!\033[0m");
         }
        
         
@@ -278,9 +258,6 @@ public class SupermarketInventory {
 
     }
 
-    public static void orderMenu(Scanner scanner,ArrayList<Product> productList){
-
-    }
 }
 
     
