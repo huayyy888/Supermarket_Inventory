@@ -165,15 +165,36 @@ public class Order {
         }else{
             order.displayOrder();
 
-            System.out.printf("Confirm order %s? (yes/no): ",order.orderId);
-            String confirm = scanner.nextLine().trim();
-
-            if (confirm.equalsIgnoreCase("yes")) {
+            System.out.printf("Confirm order %s? (y/n, default is n): ",order.orderId);
+            if (scanner.nextLine().trim().equalsIgnoreCase("y")) {
                 order.processOrder(productList);
                 System.out.println("\u001B[32mOrder processed successfully!\u001B[0m");
                 System.out.println("Your Order ID: " + order.getOrderId());
-                System.out.println("Do you want to print a receipt? (y/n, default is n)");
-                if(scanner.nextLine().equalsIgnoreCase("y")){
+                System.out.print("Add on for delivery? (y/n):");
+                if (scanner.nextLine().trim().equalsIgnoreCase("y")) {
+                    //delivery intructions
+                    do {
+                        String[] address = new String[3];
+                        String receipentName = "";
+
+                        int lineNo = 0;
+                        
+                        System.out.print("Enter receipent name (or enter to skip delivery): ");
+                        receipentName = scanner.nextLine().trim();
+                        System.out.printf("Enter address line %d: ",lineNo+1);
+                        address[lineNo] = scanner.nextLine().trim();     
+                        
+                        for(; lineNo < 3;lineNo++){
+                            //start from line 2 since 
+                            System.out.printf("Enter address line %d (or Enter to skip): ",lineNo+1);
+                            address[lineNo] = scanner.nextLine().trim();     
+                        }
+                        System.out.print("Is this ok? (y/n): ");
+                    } while (scanner.nextLine().trim().equalsIgnoreCase("y"));   
+                }
+                ////////   end delivery     /////////
+                System.out.print("Do you want to print a receipt? (y/n, default is n): ");
+                if(scanner.nextLine().trim().equalsIgnoreCase("y")){
                     order.printReceipt(admin);
                 }
             } else {
@@ -186,7 +207,7 @@ public class Order {
     }
 
     public void printReceipt(Admin admin) {
-        int itemCount = 0;
+    int itemCount = 0;
     String fileName = this.orderId + ".txt";
     try (FileWriter writer = new FileWriter(fileName)) {
         writer.write("               BOTITLE SUPERMARKET (KL BRANCH)\n");
@@ -199,7 +220,7 @@ public class Order {
         writer.write("\n" + String.format("%-27s \t %8s", "Description","Amount (RM)\n"));
         writer.write("-------------------------------------------------------------\n");
         for (OrderItem item : this.items) {
-            writer.write(String.format("%2d x %-27\t%4.2f\n", 
+            writer.write(String.format("%2d x %-27s\t%4.2f\n", 
             item.getQuantity(), item.getProduct().getName(), item.getPrice()*item.getQuantity()));
             itemCount++;
         
