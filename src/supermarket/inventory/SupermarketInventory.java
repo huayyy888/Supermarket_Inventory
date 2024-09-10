@@ -182,7 +182,7 @@ public class SupermarketInventory {
                 break;
             //PRODUCT
             case 4:
-                Product.createNewProduct(scanner, catlist);
+                Product.createNewProduct(scanner, catlist,prodList);
                 clrs();
                 break;
             case 5:

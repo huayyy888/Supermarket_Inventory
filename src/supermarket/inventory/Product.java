@@ -71,7 +71,7 @@ public class Product extends Category{
             getID(), getName(), getPrice(),getQty());
         }
         
-        public static void createNewProduct(Scanner scanner, ArrayList<Category> categories) {
+        public static void createNewProduct(Scanner scanner, ArrayList<Category> categories,ArrayList<Product> productList) {
         do{
             System.out.println("\n\n\u001B[33m--ADD A PRODUCT--\u001B[0m\n\n");
             // Display categories list
@@ -163,9 +163,10 @@ public class Product extends Category{
         
         if (scanner.nextLine().trim().equalsIgnoreCase("yes")) {
             // Write data to product.txt file
+            productList.add(newProduct);
             try (FileWriter writer = new FileWriter("product.txt", true)) {
                 writer.write(newProduct.getCatId() + ","+ productID + "," + productName + "," + productPrice + "," + productQty + "\n");
-                System.out.println("\u001B[32mNew product \"+ product +\"created and saved successfully!\u001B[0m");
+                System.out.println("\u001B[32mNew product"+ productName +"created and saved successfully!\u001B[0m");
             } catch (IOException e) {
                 System.out.println("\u001B[31mFile error! Check file\u001B[0m");
                 System.out.println(e.toString());  
@@ -476,6 +477,7 @@ public class Product extends Category{
         //if no match ELSE
         return null;
     }
+    
     public static Product selectProductFromCat(Scanner scanner, ArrayList<Category> categories, ArrayList<Product> productList) {
         System.out.println("\nSelect a category:");
         for (int i = 0; i < categories.size(); i++) {
