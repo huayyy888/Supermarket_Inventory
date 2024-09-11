@@ -331,4 +331,77 @@ public class Vendor {
             }
         }
     }
+
+    public static void requestRestock(Scanner scanner, ArrayList<Vendor> vendorList, ArrayList<Product> productList) {
+        System.out.println("\n--REQUEST RESTOCK--\n");
+
+        // Select product
+        System.out.println("Select a product to restock:");
+        for (int i = 0; i < productList.size(); i++) {
+            System.out.printf("%d. %s\n", i + 1, productList.get(i).getName());
+        }
+        int productIndex = getValidInput(scanner, 1, productList.size()) - 1;
+        Product selectedProduct = productList.get(productIndex);
+
+        // Find vendors that supply this product
+        ArrayList<Vendor> supplierVendors = new ArrayList<>();
+        for (Vendor vendor : vendorList) {
+            if (vendor.getSuppliedProducts().contains(selectedProduct)) {
+                supplierVendors.add(vendor);
+            }
+        }
+
+        if (supplierVendors.isEmpty()) {
+            System.out.println("No vendors supply this product. Restock request cancelled.");
+            return;
+        }
+
+        // Select vendor
+        System.out.println("\nSelect a vendor for this product:");
+        for (int i = 0; i < supplierVendors.size(); i++) {
+            System.out.printf("%d. %s\n", i + 1, supplierVendors.get(i).getVendorName());
+        }
+        int vendorIndex = getValidInput(scanner, 1, supplierVendors.size()) - 1;
+        Vendor selectedVendor = supplierVendors.get(vendorIndex);
+
+        // Enter quantity
+        System.out.print("Enter the quantity to restock: ");
+        int quantity = getValidInput(scanner, 1, Integer.MAX_VALUE);
+
+        // Calculate cost (90% of product price)
+        double costPerUnit = selectedProduct.getPrice() * 0.9;
+        double totalCost = costPerUnit * quantity;
+
+        // Display restock details and confirm
+        System.out.println("\nRestock Details:");
+        System.out.printf("Product: %s\n", selectedProduct.getName());
+        System.out.printf("Vendor: %s\n", selectedVendor.getVendorName());
+        System.out.printf("Quantity: %d\n", quantity);
+        System.out.printf("Cost per unit: $%.2f\n", costPerUnit);
+        System.out.printf("Total cost: $%.2f\n", totalCost);
+
+        System.out.print("\nConfirm restock request? (yes/no): ");
+        if (scanner.nextLine().trim().equalsIgnoreCase("yes")) {
+            // Here you would typically update inventory and financial records
+            // For this example, we'll just print a confirmation message
+            System.out.println("Restock request confirmed and sent to the vendor.");
+        } else {
+            System.out.println("Restock request cancelled.");
+        }
+    }
+
+    private static int getValidInput(Scanner scanner, int min, int max) {
+        int input;
+        do {
+            System.out.printf("Enter a number between %d and %d: ", min, max);
+            while (!scanner.hasNextInt()) {
+                System.out.println("That's not a valid number. Please try again.");
+                scanner.next();
+            }
+            input = scanner.nextInt();
+            scanner.nextLine(); // Consume newline
+        } while (input < min || input > max);
+        return input;
+    }
+
 }

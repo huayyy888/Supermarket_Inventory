@@ -218,7 +218,8 @@ public class SupermarketInventory {
             System.out.println("2. View Vendor List");
             System.out.println("3. Edit Vendor");
             System.out.println("4. Delete Vendor");
-            System.out.println("5. Return to Main Menu");
+            System.out.println("5. Request Restock");
+            System.out.println("6. Return to Main Menu");
            
         System.out.print("-> ");
             try {
@@ -239,13 +240,16 @@ public class SupermarketInventory {
             case 3: 
                 Vendor.editVendor(scanner, vendorList);
                 break;
-            case 4: 
-                Vendor.deleteVendor(vendorList);
+                case 4: 
+                    Vendor.deleteVendor(vendorList);
+                break;
+            case 5:
+                Vendor.requestRestock(scanner, vendorList, productList);
                 break;
             default:
             System.out.println("\u001B[31mInvalid choice!\033[0m");
         }
-        }while(choice!=5);
+        }while(choice!=6);
     }
     public static void orderMenu(Scanner scanner, ArrayList<Product> prodList,ArrayList<Category> catlist,Admin admin){
         clrs();
