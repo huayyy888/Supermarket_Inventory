@@ -71,7 +71,7 @@ public class Product extends Category{
             getID(), getName(), getPrice(),getQty());
         }
         
-        public static void createNewProduct(Scanner scanner, ArrayList<Category> categories) {
+        public static void createNewProduct(Scanner scanner, ArrayList<Category> categories,ArrayList<Product> productList) {
         do{
             System.out.println("\n\n\u001B[33m--ADD A PRODUCT--\u001B[0m\n\n");
             // Display categories list
@@ -139,9 +139,9 @@ public class Product extends Category{
             try{
                 productQty = scanner.nextInt();
                 scanner.nextLine();
-            if (productQty < 0) {
-                System.out.println("\u001B[31mQuantity cannot be negative. Please enter a valid quantity.\u001B[0m");
-            }
+                if (productQty < 0) {
+                    System.out.println("\u001B[31mQuantity cannot be negative. Please enter a valid quantity.\u001B[0m");
+                }
             }
             catch(InputMismatchException e){
                 scanner.nextLine(); // Consume the invalid input
@@ -163,9 +163,10 @@ public class Product extends Category{
         
         if (scanner.nextLine().trim().equalsIgnoreCase("yes")) {
             // Write data to product.txt file
+            productList.add(newProduct);
             try (FileWriter writer = new FileWriter("product.txt", true)) {
                 writer.write(newProduct.getCatId() + ","+ productID + "," + productName + "," + productPrice + "," + productQty + "\n");
-                System.out.println("\u001B[32mNew product \"+ product +\"created and saved successfully!\u001B[0m");
+                System.out.println("\u001B[32mNew product"+ productName +"created and saved successfully!\u001B[0m");
             } catch (IOException e) {
                 System.out.println("\u001B[31mFile error! Check file\u001B[0m");
                 System.out.println(e.toString());  
@@ -179,7 +180,7 @@ public class Product extends Category{
     }
         
     public static void displayProd(ArrayList<Product> productList) {
-        System.out.println("\u001B[33m===DISPLAYING PRODUCTS BY CATEGORY====\u001B[0m" + "\n\n\n");
+        System.out.println("\u001B[33m=== DISPLAYING PRODUCTS BY CATEGORY ====\u001B[0m" + "\n\n\n");
 
         //CHECK PRINTED CATEGORIES
         ArrayList<String> printedCategories = new ArrayList<>();
@@ -258,7 +259,7 @@ public class Product extends Category{
         return prodList;
 
    }
-    
+
     public static void writeProd(ArrayList<Product> productList) {
         try (FileWriter writer = new FileWriter("product.txt")) {
             for (Product product : productList) {
@@ -464,5 +465,71 @@ public class Product extends Category{
                     }
                 }
                 return productName.trim();
+    }
+
+    //for order
+    public static Product findProductById(ArrayList<Product> productList, String productId) {
+        for (Product product : productList) {
+            if (product.getID().equals(productId)) {
+                return product;
+            }
+        }
+        //if no match ELSE
+        return null;
+    }
+    
+    public static Product selectProductFromCat(Scanner scanner, ArrayList<Category> categories, ArrayList<Product> productList) {
+        System.out.println("\nSelect a category:");
+        for (int i = 0; i < categories.size(); i++) {
+            System.out.printf("%d. %s\n", i + 1, categories.get(i).getCatName());
+        }
+        System.out.print("->");
+        int choice = -1;
+        try {
+            choice = scanner.nextInt() - 1;
+            scanner.nextLine();
+        } catch (InputMismatchException e) {
+            scanner.nextLine();
+        }
+        
+        if (choice < 0 || choice >= categories.size()) {
+            System.out.println("\u001B[31mInvalid category selection.\u001B[0m");
+            return null;
+        }
+        
+        Category selectedCategory = categories.get(choice);  //store selected category
+        ArrayList<Product> categoryProducts = new ArrayList<>();
+        
+        for (Product product : productList) {
+            if (product.getCatId().equals(selectedCategory.getCatId())) {
+                categoryProducts.add(product);
+            }
+        }
+        
+        if (categoryProducts.isEmpty()) {
+            System.out.println("\u001B[31mNo products in this category.\u001B[0m");
+            return null;
+        }
+        
+        System.out.println("\nSelect a product:");
+        for (int i = 0; i < categoryProducts.size(); i++) {
+            Product product = categoryProducts.get(i);
+            System.out.printf("%d. %s (RM%.2f, %d in stock)\n", i + 1, product.getName(), product.getPrice(), product.getQty());
+        }
+        System.out.print("->");
+        choice = -1;
+        try {
+            choice = scanner.nextInt() - 1;
+            scanner.nextLine();
+        } catch (InputMismatchException e) {
+            scanner.nextLine();
+        }
+        
+        if (choice < 0 || choice >= categoryProducts.size()) {
+            System.out.println("\u001B[31mInvalid product selection.\u001B[0m");
+            return null;
+        }
+        
+        return categoryProducts.get(choice);
     }
 }

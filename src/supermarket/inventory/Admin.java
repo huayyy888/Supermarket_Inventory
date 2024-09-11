@@ -82,7 +82,7 @@ public class Admin {
     
     // Method to initialize the file with default content
     private static void initializeFile(File file) {
-        try (FileWriter writer = new FileWriter(file)) { //BufferedWriter is almost similar to FileWriter but it uses internal buffer to write data into File
+        try (FileWriter writer = new FileWriter(file)) { 
             // Writing default ID and password to the file
             writer.write("admin:3588\n");
         } catch (IOException e) {
@@ -100,4 +100,6 @@ public class Admin {
             System.out.println("File error while saving admin settings!");
         }
     }
+
+    
 }

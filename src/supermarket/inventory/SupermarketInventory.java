@@ -1,6 +1,7 @@
 package supermarket.inventory;
 import java.util.ArrayList;
 import java.util.InputMismatchException;
+import java.util.List;
 import java.util.Scanner;
 
 public class SupermarketInventory {
@@ -23,7 +24,8 @@ public class SupermarketInventory {
         //Initialising values from file
         ArrayList<Category> catlist = Category.getCatList();
         ArrayList<Product> prodList = Product.getProdList(catlist);   //retrive category data from catlist
-
+        ArrayList<Vendor> vendorList = Vendor.getVendorList();
+        
         clrs();
         do {
             System.out.println("\u001B[33m"+"===========================\nLogin successfully as " + admin.getID() + "!\n"+"Welcome to: Botitle Supermarket IMS:\n==========================="+"\u001B[0m");
@@ -48,11 +50,10 @@ public class SupermarketInventory {
                     invMenu(scanner,catlist,prodList);
                     break;
                 case 2:
-                    //****************CALL OUT 
-                    System.out.println("You selected Purchase Order");
+                    orderMenu(scanner,prodList,catlist,admin);
                     break;
                 case 3:
-                    vendorMenu(scanner, null, prodList);
+                    vendorMenu(scanner, vendorList, prodList, catlist);
                     break;
                 case 4:
                     //****************CALL OUT 
@@ -69,78 +70,7 @@ public class SupermarketInventory {
         scanner.close();
     }
     
-    
-    public static void invMenu(Scanner scanner,ArrayList<Category> catlist,ArrayList<Product> prodList){
-        clrs();
-        int choice;
-        do{
-            choice = 0;
-            System.out.println("\u001B[33m"+"=========================\n\tInventory\n========================="+"\u001B[0m");
-            System.out.println("<-Categories->");
-            System.out.println("1. Add Product Category");
-            System.out.println("2. View Product Categories");
-            System.out.println("3. Edit/Delete Category");
-            
-            System.out.println("\n<-Products->");
-            System.out.println("4. Add a New Product");
-            System.out.println("5. View Products");
-            System.out.println("6. Delete a Product");
-            System.out.println("7. Edit a Product");
-            System.out.println("\n?. Return to main menu");
-        
-            System.out.print("-> ");
-            try {
-                    choice = scanner.nextInt();
-                        // consumes the dangling newline character
-                    scanner.nextLine();
-                } catch (InputMismatchException e) {
-                    scanner.nextLine(); // Consume the invalid input   
-                }
-            clrs();
-            switch (choice) {
-            //CATEGORY
-            case 1:
-                Category.addCat(scanner, catlist);
-                clrs();
-                break;
-            case 2:
-                Category.displayList(catlist);
-                System.out.println("Press enter to continue..");
-                scanner.nextLine();
-                clrs();
-                break;
-            case 3:
-                Category.manageCat(scanner,catlist,prodList);
-                break;
-            //PRODUCT
-            case 4:
-                Product.createNewProduct(scanner, catlist);
-                clrs();
-                break;
-            case 5:
-                Product.displayProd(prodList);
-                System.out.println("Press enter to continue..");
-                scanner.nextLine();
-                clrs();
-                break;
-            case 6:
-                Product.deleteProd(prodList);
-                clrs();
-                break;
-            case 7:
-                Product.editProdMenu(scanner,prodList,catlist);
-                clrs();
-                break;
-            
-            case 10:
-                return;
-            default:
-                System.out.println("\u001B[31m"+"Invalid choice!"+"\033[0m");
-            }
-        }while(choice != 10);
-    }
-
-//Login process
+     //Login process
     public static boolean login(Scanner scanner, Admin admin) {       
         System.out.print("Enter username (Press X to exit): ");
         
@@ -158,16 +88,9 @@ public class SupermarketInventory {
         
         return USERNAME.equals(username) && PASSWORD.equals(password);
     }
-    
     //To print newlines and make code more organized
-    public static void clrs(){
-        for(int i =0;i<=10;i++){
-            System.out.println("\n");
-        }
-    //System.out.print("\033c"); ///Clear screen in console cmd
-    }
-
-    //----------------EDIT　ADMIN　Setting----------------------------------
+    
+        //----------------ADMIN----------------------------------
     public static void editAdminSettings(Scanner scanner, Admin admin) {
         clrs();
         int choice;
@@ -214,11 +137,81 @@ public class SupermarketInventory {
         }while(choice != 3);
     }
     
-    //----------------------Vendor Menu--------------------------
-    public static void vendorMenu(Scanner scanner,ArrayList<Vendor> vendor,ArrayList<Product> productList){
+    public static void invMenu(Scanner scanner,ArrayList<Category> catlist,ArrayList<Product> prodList){
         clrs();
         int choice;
         do{
+            choice = 0;
+            System.out.println("\u001B[33m"+"=========================\n\tInventory\n========================="+"\u001B[0m");
+            System.out.println("<-Categories->");
+            System.out.println("1. Add Product Category");
+            System.out.println("2. View Product Categories");
+            System.out.println("3. Edit/Delete Category");
+            
+            System.out.println("\n<-Products->");
+            System.out.println("4. Add a New Product");
+            System.out.println("5. View Products");
+            System.out.println("6. Delete a Product");
+            System.out.println("7. Edit a Product");
+            System.out.println("\n?. Return to main menu");
+        
+            System.out.print("-> ");
+            try {
+                    choice = scanner.nextInt();
+                        // consumes the dangling newline character
+                    scanner.nextLine();
+                } catch (InputMismatchException e) {
+                    scanner.nextLine(); // Consume the invalid input   
+                }
+            clrs();
+            switch (choice) {
+            //CATEGORY
+            case 1:
+                Category.addCat(scanner, catlist);
+                clrs();
+                break;
+            case 2:
+                Category.displayList(catlist);
+                System.out.println("Press enter to continue..");
+                scanner.nextLine();
+                clrs();
+                break;
+            case 3:
+                Category.manageCat(scanner,catlist,prodList);
+                break;
+            //PRODUCT
+            case 4:
+                Product.createNewProduct(scanner, catlist,prodList);
+                clrs();
+                break;
+            case 5:
+                Product.displayProd(prodList);
+                System.out.println("Press enter to continue..");
+                scanner.nextLine();
+                clrs();
+                break;
+            case 6:
+                Product.deleteProd(prodList);
+                clrs();
+                break;
+            case 7:
+                Product.editProdMenu(scanner,prodList,catlist);
+                clrs();
+                break;
+            
+            case 10:
+                return;
+            default:
+                System.out.println("\u001B[31m"+"Invalid choice!"+"\033[0m");
+            }
+        }while(choice != 10);
+    }
+
+    //----------------------Vendor Menu--------------------------
+    public static void vendorMenu(Scanner scanner, ArrayList<Vendor> vendorList, ArrayList<Product> productList, ArrayList<Category> catlist) {
+        clrs();
+        int choice;
+        do {
             choice = 0;
             System.out.println("\u001B[33m"+"=========================\n\tVendor\n========================="+"\u001B[0m");
             System.out.println("1. Add Vendor");
@@ -238,24 +231,61 @@ public class SupermarketInventory {
         clrs();
         switch(choice){
             case 1:
-                Vendor.createNewVendor(scanner, vendor,productList);
+                Vendor.createNewVendor(scanner, vendorList,productList,catlist);
                 break;
             case 2: 
-                Vendor.displayVendors(vendor);
+                Vendor.displayVendors(vendorList);
                 break;
             case 3: 
-                Vendor.editVendor(scanner, vendor);
+                Vendor.editVendor(scanner, vendorList);
                 break;
             case 4: 
-                Vendor.deleteVendor(vendor);
+                Vendor.deleteVendor(vendorList);
                 break;
             default:
             System.out.println("\u001B[31mInvalid choice!\033[0m");
         }
-       
-        
         }while(choice!=5);
+    }
+    public static void orderMenu(Scanner scanner, ArrayList<Product> prodList,ArrayList<Category> catlist,Admin admin){
+        clrs();
+        int choice;
+        do{
+            choice = 0;
+            System.out.println("\u001B[33m"+"=========================\n\tInventory\n========================="+"\u001B[0m");
+            System.out.println("1. Add Order");
 
+
+            System.out.println("\n4. Return to main menu");
+        
+            System.out.print("-> ");
+            try {
+                    choice = scanner.nextInt();
+                        // consumes the dangling newline character
+                    scanner.nextLine();
+                } catch (InputMismatchException e) {
+                    scanner.nextLine(); // Consume the invalid input   
+                }
+            clrs();
+            switch (choice) {
+            //CATEGORY
+            case 1:
+                Order.addOrder(scanner, prodList, catlist,admin);
+                clrs();
+                break;
+            case 4:
+                return;
+            default:
+                System.out.println("\u001B[31m"+"Invalid choice!"+"\033[0m");
+            }
+        }while(choice != 4);
+    }
+    
+    public static void clrs(){
+        for(int i =0;i<=10;i++){
+            System.out.println("\n");
+        }
+    //System.out.print("\033c"); ///Clear screen in console cmd
     }
 
 }
