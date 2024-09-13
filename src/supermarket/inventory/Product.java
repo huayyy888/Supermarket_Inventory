@@ -20,14 +20,19 @@ public class Product extends Category{
 	private int qty;
 	
 	public Product(String catId, String catName, String prodID, String name, double price, int qty) {
-                super(catId,catName);
-             
+        super(catId,catName);     
 		this.prodID = prodID;
 		this.name = name;
 		this.price = price;
 		this.qty = qty;
 	}
 	
+    //to be used with equals()
+    public Product(String catId, String catName,String name){
+        super(catId,catName);     
+        this.name = name;
+    }
+
 	public String getID() {
 		return prodID;
 	}
@@ -284,9 +289,9 @@ public class Product extends Category{
             return;     
         }
         // Search for the product in the product list
-        Product productToDelete = null;
+        Product productToDelete = new Product("CT001","Vegetables",prodID);
         for (Product product : productList) {
-            if (product.getID().equals(prodID)) {
+            if (product.equals(productToDelete)) {
                 productToDelete = product;
                 break;
             }
@@ -532,4 +537,20 @@ public class Product extends Category{
         
         return categoryProducts.get(choice);
     }
+
+    @Override   //if two products are same, return true
+    public boolean equals(Object o) {
+        if(o == null)
+            return false;
+        else if (o instanceof Product) {    // if object is a product
+            return this.prodID.equalsIgnoreCase(((Product)o).prodID);
+        }
+        else
+            return false;
+        
+        
+        
+    }
+
+    
 }
