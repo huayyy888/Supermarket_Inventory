@@ -20,7 +20,7 @@ public class Vendor {
         this.vendorName = vendorName;
         this.vendorContact = vendorContact;
         this.email = email;
-        this.suppliedProducts = new ArrayList<>();
+        this.suppliedProducts = suppliedProducts;
     }
     
     public String getVendorID() {
@@ -64,19 +64,33 @@ public class Vendor {
     
     @Override
     public String toString() {
-        return String.format("Vendor ID: %s\nVendor Name: %s\nContact: %s\nEmail: %s", vendorID, vendorName, vendorContact,email);
+        return "Vendor ID: " + vendorID + "\n" +
+               "Vendor Name: " + vendorName + "\n" +
+               "Contact: " + vendorContact + "\n" +
+               "Email: " + email;
     }
 
-    // Select products for vendor
+    //////////////////////////////-------------------VENDOR DRIVER-----------------------////////////////////
+    // Select products for a vendor
     public static void selectProductsForVendor(Scanner scanner, ArrayList<Vendor> vendorList, ArrayList<Product> productList, ArrayList<Category> catlist) {
+        // Get the most recently added vendor
         Vendor currentVendor = vendorList.get(vendorList.size() - 1);
+        
         while (true) {
+            // Display all products
             Product.displayProd(productList);
+            
+            // Let user select a product
             Product selectedProduct = Product.selectProductFromCat(scanner, catlist, productList);
+            
             if (selectedProduct != null) {
+                // Add the selected product to the vendor's list
                 currentVendor.getSuppliedProducts().add(selectedProduct);  
+                
+                // Ask if user wants to add another product
                 System.out.print("Do you want to add another product? (yes/no): ");
-                if (!scanner.nextLine().trim().equalsIgnoreCase("yes")) {
+                String answer = scanner.nextLine().trim().toLowerCase();
+                if (!answer.equals("yes")) {
                     break;
                 }
             } else {
@@ -90,27 +104,15 @@ public class Vendor {
     public static void createNewVendor(Scanner scanner, ArrayList<Vendor> vendorList, ArrayList<Product> productList, ArrayList<Category> catlist) {
         System.out.println("\n\n--ADD A NEW VENDOR--\n");
 
-        String vendorName;
-        do {
-            System.out.print("Enter vendor name: ");
-            vendorName = scanner.nextLine().trim();
-        } while (vendorName.isEmpty());
-
-        String vendorContact;
-        do {
-            System.out.print("Enter vendor contact: ");
-            vendorContact = scanner.nextLine().trim();
-        } while (vendorContact.isEmpty());
-
-        String email;
-        do {
-            System.out.print("Enter vendor email: ");
-            email = scanner.nextLine().trim();
-        } while (email.isEmpty() || !isValidEmail(email));
+        // Get vendor details from user
+        String vendorName = getInputWithPrompt(scanner, "Enter vendor name: ");
+        String vendorContact = getInputWithPrompt(scanner, "Enter vendor contact: ");
+        String email = getValidEmailInput(scanner);
     
-        // Generate Vendor ID
+        // Generate a unique Vendor ID
         String vendorID = generateUniqueVendorID(vendorList);
     
+        // Create a new Vendor object
         Vendor newVendor = new Vendor(vendorID, vendorName, vendorContact, email, new ArrayList<Product>());
         
         // Add the new vendor to the list
@@ -124,17 +126,41 @@ public class Vendor {
         System.out.println(newVendor);
         System.out.println("Supplied Products:");
         for (Product product : newVendor.getSuppliedProducts()) {
-            System.out.println("- " + product.getName());
+            System.out.println("- " + product.getID());
         }
-        System.out.print("Do you want to add this vendor? (yes/no, default is no): ");
         
-        if (scanner.nextLine().trim().equalsIgnoreCase("yes")) {
+        // Ask for confirmation
+        System.out.print("Do you want to add this vendor? (yes/no): ");
+        String confirmation = scanner.nextLine().trim().toLowerCase();
+        
+        if (confirmation.equals("yes")) {
             writeVendorsToFile(vendorList);
             System.out.println("New vendor created and saved successfully!");
         } else {
             vendorList.remove(newVendor);
-            System.out.println("**Vendor addition canceled.**");
+            System.out.println("Vendor addition canceled.");
         }
+    }
+
+    private static String getInputWithPrompt(Scanner scanner, String prompt) {
+        String input;
+        do {
+            System.out.print(prompt);
+            input = scanner.nextLine().trim();
+        } while (input.isEmpty());
+        return input;
+    }
+
+    private static String getValidEmailInput(Scanner scanner) {
+        String email;
+        do {
+            System.out.print("Enter vendor email: ");
+            email = scanner.nextLine().trim();
+            if (!isValidEmail(email)) {
+                System.out.println("Invalid email format. Please try again.");
+            }
+        } while (!isValidEmail(email));
+        return email;
     }
 
     // Generate unique vendor ID
@@ -166,12 +192,12 @@ public class Vendor {
     // (R) Display vendors
     public static void displayVendors(ArrayList<Vendor> vendorList) {
         System.out.println("\n--DISPLAYING ALL VENDORS--\n");
-        System.out.printf("%-10s | %-20s | %-15s | %-25s | %-30s\n", "Vendor ID", "Vendor Name", "Contact", "Email", "Supplied Products");
+        System.out.printf("%-10s | %-20s | %-15s | %-25s | %-30s\n", "Vendor ID", "Vendor Name", "Contact", "Email", "Supplied Products ID");
         System.out.println("-".repeat(110));
         for (Vendor vendor : vendorList) {
             String suppliedProducts = String.join(", ", 
                 vendor.getSuppliedProducts().stream()
-                    .map(Product::getName)
+                    .map(Product::getID)
                     .collect(java.util.stream.Collectors.toList()));
             
             System.out.printf("%-10s | %-20s | %-15s | %-25s | %-30s\n",
@@ -182,17 +208,16 @@ public class Vendor {
                 (suppliedProducts.length() > 100 ? suppliedProducts.substring(0, 100) + "..." : suppliedProducts));
             
             // If the product list is too long, print the rest on new lines
-            if (suppliedProducts.length() > 30) {
+            /*if (suppliedProducts.length() > 30) {
                 for (int i = 30; i < suppliedProducts.length(); i += 30) {
                     System.out.printf("%-74s | %-30s\n", "",
                         suppliedProducts.substring(i, Math.min(i + 30, suppliedProducts.length())));
                 }
-            }
+            }*/
             System.out.println("-".repeat(110));
         }
     }
     
-    // Get vendor list (Read from file)
     public static ArrayList<Vendor> getVendorList() {
         ArrayList<Vendor> vendorList = new ArrayList<>();
         File file = new File("vendor.txt");
@@ -214,7 +239,7 @@ public class Vendor {
                 String[] vendorData = line.split(",");
                 if (vendorData.length >= 5) {
                     ArrayList<Product> suppliedProducts = new ArrayList<>();
-                    if (vendorData.length > 4 && !vendorData[4].isEmpty()) {
+                    if (vendorData.length > 4 || !vendorData[4].isEmpty()) {
                         String[] productNames = vendorData[4].split("\\|");
                         for (String productName : productNames) {
                             suppliedProducts.add(new Product(productName.trim(), "", productName, productName, 0.0, 0));
@@ -240,12 +265,21 @@ public class Vendor {
     }
     
 
+    /*@SuppressWarnings("unused")
+    private static Product findProductById(ArrayList<Product> productList, String productID) {
+        for (Product product : productList) {
+            if (product.getID().equals(productID)) {
+                return product;
+            }
+        }
+        return null;
+    }*/
     public static void writeVendorsToFile(ArrayList<Vendor> vendorList) {
-        try (FileWriter writer = new FileWriter("vendor.txt")) { // Remove 'true' to overwrite the file
+        try (FileWriter writer = new FileWriter("vendor.txt")) {
             for (Vendor vendor : vendorList) {
-                String suppliedProductNames = String.join("|", 
+                String suppliedProductIDs = String.join("|", 
                     vendor.getSuppliedProducts().stream()
-                        .map(Product::getName)
+                        .map(Product::getID)
                         .collect(java.util.stream.Collectors.toList()));
                 
                 writer.write(String.format("%s,%s,%s,%s,%s\n",
@@ -253,7 +287,7 @@ public class Vendor {
                     vendor.getVendorName(),
                     vendor.getVendorContact(),
                     vendor.getEmail(),
-                    suppliedProductNames));
+                    suppliedProductIDs));
             }
             System.out.println("Vendor file successfully updated!");
         } catch (IOException e) {
@@ -346,10 +380,10 @@ public class Vendor {
         // Find vendors that supply this product
         ArrayList<Vendor> supplierVendors = new ArrayList<>();
         for (Vendor vendor : vendorList) {
-            if (vendor.getSuppliedProducts().contains(selectedProduct)) {
-                supplierVendors.add(vendor);
-            }
+        if (vendor.getSuppliedProducts().stream().anyMatch(p -> p.getID().equals(selectedProduct.getID()))) {
+            supplierVendors.add(vendor);
         }
+    }
 
         if (supplierVendors.isEmpty()) {
             System.out.println("No vendors supply this product. Restock request cancelled.");
@@ -382,11 +416,48 @@ public class Vendor {
 
         System.out.print("\nConfirm restock request? (yes/no): ");
         if (scanner.nextLine().trim().equalsIgnoreCase("yes")) {
+            updateProductQuantityInFile(selectedProduct, quantity);
             // Here you would typically update inventory and financial records
             // For this example, we'll just print a confirmation message
             System.out.println("Restock request confirmed and sent to the vendor.");
         } else {
             System.out.println("Restock request cancelled.");
+        }
+    }
+
+    //for request to restock to use 
+    private static void updateProductQuantityInFile(Product selectedProduct, int quantity) {
+        File file = new File("product.txt");
+        ArrayList<String> fileContent = new ArrayList<>();
+    
+        System.out.println("Updating quantity for product ID: " + selectedProduct.getID());
+        System.out.println("Adding quantity: " + quantity);
+    
+        try (Scanner fileReader = new Scanner(file)) {
+            while (fileReader.hasNextLine()) {
+                String line = fileReader.nextLine();
+                String[] productData = line.split(",");
+                if (productData[0].trim().equals(selectedProduct.getID())) {
+                    int currentQuantity = Integer.parseInt(productData[6].trim());
+                    int newQuantity = currentQuantity + quantity;
+                    productData[6] = String.valueOf(newQuantity);
+                    line = String.join(",", productData);
+                    System.out.println("Found product. Old quantity: " + currentQuantity + ", New quantity: " + newQuantity);
+                }
+                fileContent.add(line);
+            }
+        } catch (IOException e) {
+            System.out.println("Error reading product.txt file: " + e.getMessage());
+            return;
+        }
+    
+        try (FileWriter writer = new FileWriter(file)) {
+            for (String line : fileContent) {
+                writer.write(line + "\n");
+            }
+            System.out.println("Product file successfully updated!");
+        } catch (IOException e) {
+            System.out.println("Error writing to product.txt file: " + e.getMessage());
         }
     }
 
