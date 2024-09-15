@@ -240,12 +240,14 @@ public class SupermarketInventory {
             case 3: 
                 Vendor.editVendor(scanner, vendorList);
                 break;
-                case 4: 
+            case 4: 
                     Vendor.deleteVendor(vendorList);
                 break;
             case 5:
                 Vendor.requestRestock(scanner, vendorList, productList);
                 break;
+            case 6:
+                return;
             default:
             System.out.println("\u001B[31mInvalid choice!\033[0m");
         }

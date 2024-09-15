@@ -71,7 +71,8 @@ public class Vendor {
     }
 
     //////////////////////////////-------------------VENDOR DRIVER-----------------------////////////////////
-    // Select products for a vendor
+
+    //------------------------SELECT PRODUCT-----------------//
     public static void selectProductsForVendor(Scanner scanner, ArrayList<Vendor> vendorList, ArrayList<Product> productList, ArrayList<Category> catlist) {
         // Get the most recently added vendor
         Vendor currentVendor = vendorList.get(vendorList.size() - 1);
@@ -100,7 +101,7 @@ public class Vendor {
         }
     }
     
-    // (C) Create new vendor
+    //----------------------(C) CREATE VENDOR -----------------------//
     public static void createNewVendor(Scanner scanner, ArrayList<Vendor> vendorList, ArrayList<Product> productList, ArrayList<Category> catlist) {
         System.out.println("\n\n--ADD A NEW VENDOR--\n");
 
@@ -416,7 +417,7 @@ public class Vendor {
 
         System.out.print("\nConfirm restock request? (yes/no): ");
         if (scanner.nextLine().trim().equalsIgnoreCase("yes")) {
-            updateProductQuantityInFile(selectedProduct, quantity);
+            updateProductQty(selectedProduct.getID(), quantity);
             // Here you would typically update inventory and financial records
             // For this example, we'll just print a confirmation message
             System.out.println("Restock request confirmed and sent to the vendor.");
@@ -425,29 +426,32 @@ public class Vendor {
         }
     }
 
-    //for request to restock to use 
-    private static void updateProductQuantityInFile(Product selectedProduct, int quantity) {
+    private static void updateProductQty(String productId, int quantityToAdd) {
         File file = new File("product.txt");
         ArrayList<String> fileContent = new ArrayList<>();
-    
-        System.out.println("Updating quantity for product ID: " + selectedProduct.getID());
-        System.out.println("Adding quantity: " + quantity);
+        boolean productFound = false;
     
         try (Scanner fileReader = new Scanner(file)) {
             while (fileReader.hasNextLine()) {
                 String line = fileReader.nextLine();
                 String[] productData = line.split(",");
-                if (productData[0].trim().equals(selectedProduct.getID())) {
-                    int currentQuantity = Integer.parseInt(productData[6].trim());
-                    int newQuantity = currentQuantity + quantity;
-                    productData[6] = String.valueOf(newQuantity);
+                if (productData[1].trim().equals(productId)) {
+                    productFound = true;
+                    int currentQuantity = Integer.parseInt(productData[4].trim());
+                    int newQuantity = currentQuantity + quantityToAdd;
+                    productData[4] = String.valueOf(newQuantity);
                     line = String.join(",", productData);
-                    System.out.println("Found product. Old quantity: " + currentQuantity + ", New quantity: " + newQuantity);
+                    System.out.println("Updating product " + productId + ": Old quantity: " + currentQuantity + ", New quantity: " + newQuantity);
                 }
                 fileContent.add(line);
             }
         } catch (IOException e) {
-            System.out.println("Error reading product.txt file: " + e.getMessage());
+            System.out.println("\u001B[31mError reading product.txt file: " + e.getMessage() + "\u001B[0m");
+            return;
+        }
+    
+        if (!productFound) {
+            System.out.println("\u001B[31mProduct with ID " + productId + " not found in the file.\u001B[0m");
             return;
         }
     
@@ -455,12 +459,13 @@ public class Vendor {
             for (String line : fileContent) {
                 writer.write(line + "\n");
             }
-            System.out.println("Product file successfully updated!");
+            System.out.println("\u001B[32mProduct quantity updated successfully in the file!\u001B[0m");
         } catch (IOException e) {
-            System.out.println("Error writing to product.txt file: " + e.getMessage());
+            System.out.println("\u001B[31mError writing to product.txt file: " + e.getMessage() + "\u001B[0m");
         }
     }
 
+    
     private static int getValidInput(Scanner scanner, int min, int max) {
         int input;
         do {
