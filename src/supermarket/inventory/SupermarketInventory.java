@@ -233,18 +233,33 @@ public class SupermarketInventory {
         switch(choice){
             case 1:
                 Vendor.createNewVendor(scanner, vendorList,productList,catlist);
+                System.out.println("Press enter to continue..");
+                scanner.nextLine();
+                clrs();
                 break;
             case 2: 
                 Vendor.displayVendors(vendorList);
+                System.out.println("Press enter to continue..");
+                scanner.nextLine();
+                clrs();
                 break;
             case 3: 
-                Vendor.editVendor(scanner, vendorList);
+                Vendor.editVendor(scanner, vendorList, productList);
+                System.out.println("Press enter to continue..");
+                scanner.nextLine();
+                clrs();
                 break;
             case 4: 
-                    Vendor.deleteVendor(vendorList);
+                Vendor.deleteVendor(vendorList);
+                System.out.println("Press enter to continue..");
+                scanner.nextLine();
+                clrs();
                 break;
             case 5:
                 Vendor.requestRestock(scanner, vendorList, productList);
+                System.out.println("Press enter to continue..");
+                scanner.nextLine();
+                clrs();
                 break;
             case 6:
                 return;
