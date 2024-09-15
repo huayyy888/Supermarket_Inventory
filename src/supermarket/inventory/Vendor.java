@@ -106,8 +106,18 @@ public class Vendor {
         System.out.println("\n\n--ADD A NEW VENDOR--\n");
 
         // Get vendor details from user
-        String vendorName = getInputWithPrompt(scanner, "Enter vendor name: ");
-        String vendorContact = getInputWithPrompt(scanner, "Enter vendor contact: ");
+        String vendorName;
+        do {
+            System.out.print("Enter vendor name: ");
+            vendorName = scanner.nextLine().trim();
+        } while (vendorName.isEmpty());
+        
+        String vendorContact;
+        do {
+            System.out.print("Enter vendor contact: ");
+            vendorContact = scanner.nextLine().trim();
+        } while (vendorContact.isEmpty());
+
         String email = getValidEmailInput(scanner);
     
         // Generate a unique Vendor ID
@@ -141,15 +151,6 @@ public class Vendor {
             vendorList.remove(newVendor);
             System.out.println("Vendor addition canceled.");
         }
-    }
-
-    private static String getInputWithPrompt(Scanner scanner, String prompt) {
-        String input;
-        do {
-            System.out.print(prompt);
-            input = scanner.nextLine().trim();
-        } while (input.isEmpty());
-        return input;
     }
 
     private static String getValidEmailInput(Scanner scanner) {
