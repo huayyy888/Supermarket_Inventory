@@ -268,7 +268,7 @@ public class Product extends Category{
         return prodList;
 
    }
-    
+
     public static void writeProd(ArrayList<Product> productList) {
         try (FileWriter writer = new FileWriter("product.txt")) {
             for (Product product : productList) {

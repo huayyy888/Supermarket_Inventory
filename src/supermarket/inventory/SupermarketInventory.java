@@ -1,6 +1,7 @@
 package supermarket.inventory;
 import java.util.ArrayList;
 import java.util.InputMismatchException;
+import java.util.List;
 import java.util.Scanner;
 
 public class SupermarketInventory {
@@ -11,7 +12,6 @@ public class SupermarketInventory {
        int kickCount = 0;
        Admin admin = new Admin();       //Call a new admin
        Scanner scanner = new Scanner(System.in);
-       
        
        while (!login(scanner,admin)) {
             kickCount++;
@@ -25,12 +25,11 @@ public class SupermarketInventory {
         //Initialising values from file
         ArrayList<Category> catlist = Category.getCatList();
         ArrayList<Product> prodList = Product.getProdList(catlist);   //retrive category data from catlist
-
+        ArrayList<Vendor> vendorList = Vendor.getVendorList();
+        
         clrs();
         do {
-            System.out.println("\u001B[33m"+"===========================\u001B[0m");
-            System.out.print("Login successfully as " +  String.format("\u001B[36m%s\u001B[0m", admin.getID())+ "!\nWelcome to: Botitle Supermarket IMS:\n");
-            System.out.println("\u001B[33m"+"===========================\u001B[0m");
+            System.out.println("\u001B[33m"+"===========================\nLogin successfully as " + admin.getID() + "!\n"+"Welcome to: Botitle Supermarket IMS:\n==========================="+"\u001B[0m");
             System.out.println("1. Inventory");
             System.out.println("2. Orders/Sales");
             System.out.println("3. Vendors");
@@ -45,6 +44,7 @@ public class SupermarketInventory {
             } catch (InputMismatchException e) {
                 scanner.nextLine(); // Consume the invalid input   
             }   
+            
             clrs();
             switch (mainChoice) {
                 case 1:
@@ -54,8 +54,7 @@ public class SupermarketInventory {
                     orderMenu(scanner,prodList,catlist,admin);
                     break;
                 case 3:
-                    //****************CALL OUT 
-                    vendorMenu(scanner,prodList);
+                    vendorMenu(scanner, vendorList, prodList, catlist);
                     break;
                 case 4:
                     //****************CALL OUT 
@@ -213,19 +212,20 @@ public class SupermarketInventory {
             }
         }while(choice != 10);
     }
-    public static void vendorMenu(Scanner scanner,ArrayList<Product> productList){
+
+    //----------------------Vendor Menu--------------------------
+    public static void vendorMenu(Scanner scanner, ArrayList<Vendor> vendorList, ArrayList<Product> productList, ArrayList<Category> catlist) {
         clrs();
         int choice;
-        do{
+        do {
             choice = 0;
-            System.out.println("""
-                               \u001b[33m=========================
-                               \tVendor
-                               =========================\u001b[0m""");
+            System.out.println("\u001B[33m"+"=========================\n\tVendor\n========================="+"\u001B[0m");
             System.out.println("1. Add Vendor");
             System.out.println("2. View Vendor List");
-            System.out.println("3. Edit/Delete Vendor");
-            System.out.println("4. Exit");
+            System.out.println("3. Edit Vendor");
+            System.out.println("4. Delete Vendor");
+            System.out.println("5. Request Restock");
+            System.out.println("6. Return to Main Menu");
            
         System.out.print("-> ");
             try {
@@ -237,11 +237,42 @@ public class SupermarketInventory {
                 }
         clrs();
         switch(choice){
+            case 1:
+                Vendor.createNewVendor(scanner, vendorList,productList,catlist);
+                System.out.println("Press enter to continue..");
+                scanner.nextLine();
+                clrs();
+                break;
+            case 2: 
+                Vendor.displayVendors(vendorList);
+                System.out.println("Press enter to continue..");
+                scanner.nextLine();
+                clrs();
+                break;
+            case 3: 
+                Vendor.editVendor(scanner, vendorList, productList);
+                System.out.println("Press enter to continue..");
+                scanner.nextLine();
+                clrs();
+                break;
+            case 4: 
+                Vendor.deleteVendor(vendorList);
+                System.out.println("Press enter to continue..");
+                scanner.nextLine();
+                clrs();
+                break;
             case 5:
+                Vendor.requestRestock(scanner, vendorList, productList);
+                System.out.println("Press enter to continue..");
+                scanner.nextLine();
+                clrs();
+                break;
+            case 6:
                 return;
-            default: 
+            default:
+            System.out.println("\u001B[31mInvalid choice!\033[0m");
         }
-        }while(choice!=5);
+        }while(choice!=6);
     }
     public static void orderMenu(Scanner scanner, ArrayList<Product> prodList,ArrayList<Category> catlist,Admin admin){
         clrs();
@@ -282,11 +313,7 @@ public class SupermarketInventory {
         }
     //System.out.print("\033c"); ///Clear screen in console cmd
     }
-
-
-
-
-
+  
     private static void invReport(ArrayList<Category> categories, ArrayList<Product> products) {
         System.out.println("\t\u001B[33m=== INVENTORY REPORT ===\u001B[0m");    
         double totalValue = 0;
@@ -377,6 +404,7 @@ public class SupermarketInventory {
         }
     }
     
+
 
 }
 
