@@ -16,8 +16,7 @@ import java.util.Scanner;
  */
 public class Admin {    
     private static String id,password; 
-    public Admin() {
-       
+    public Admin() {   
     }
 
     //Constructor 
@@ -40,21 +39,19 @@ public class Admin {
         saveToFile(); // Save the updated ID to the file
     }
 
-    public  void setAdminPassword(String newPassword) {
+    public void setAdminPassword(String newPassword) {
         Admin.password = newPassword;
         saveToFile(); // Save the updated password to the file
     }
     
-    // Static block to initialize ID and password from the file
     static {
         File file = new File("admin.txt");
         // Check if the file exists; if not, create and initialize it
-        // Attempt to read the file
         if (!readFromFile(file)) {
             System.out.println("Initialising with default values...");
             // If reading fails or file content is incorrect, initialize the file again
             initializeFile(file);
-            readFromFile(file);  // Attempt to read again after reinitialization
+            readFromFile(file);  // read again
         }
     }
  

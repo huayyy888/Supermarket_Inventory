@@ -6,7 +6,8 @@ import java.util.Scanner;
 public class SupermarketInventory {
     
     public static void main(String[] args) {
-       int mainChoice = 0,chances = 3;
+       int mainChoice = 0,
+       chances = 3;
        int kickCount = 0;
        Admin admin = new Admin();       //Call a new admin
        Scanner scanner = new Scanner(System.in);
@@ -31,7 +32,7 @@ public class SupermarketInventory {
             System.out.print("Login successfully as " +  String.format("\u001B[36m%s\u001B[0m", admin.getID())+ "!\nWelcome to: Botitle Supermarket IMS:\n");
             System.out.println("\u001B[33m"+"===========================\u001B[0m");
             System.out.println("1. Inventory");
-            System.out.println("2. Orders");
+            System.out.println("2. Orders/Sales");
             System.out.println("3. Vendors");
             System.out.println("4. Edit Admin Settings");
             System.out.println("5. Exit");
@@ -136,8 +137,7 @@ public class SupermarketInventory {
                 scanner.nextLine(); // Consume invalid input
             }
         }while(choice != 3);
-    }
-    
+    }   
     public static void invMenu(Scanner scanner,ArrayList<Category> catlist,ArrayList<Product> prodList){
         clrs();
         int choice;
@@ -154,7 +154,8 @@ public class SupermarketInventory {
             System.out.println("5. View Products");
             System.out.println("6. Delete a Product");
             System.out.println("7. Edit a Product");
-            System.out.println("\n?. Return to main menu");
+            System.out.println("\u001B[34m8.\u001B[0m" + " Generate Product Overview");            
+            System.out.println("\n9. Return to MENU");
         
             System.out.print("-> ");
             try {
@@ -199,8 +200,13 @@ public class SupermarketInventory {
                 Product.editProdMenu(scanner,prodList,catlist);
                 clrs();
                 break;
-            
-            case 10:
+            case 8:
+                invReport(catlist, prodList);
+                System.out.println("Press enter to continue..");
+                scanner.nextLine();
+                clrs();
+                break;
+            case 9:
                 return;
             default:
                 System.out.println("\u001B[31m"+"Invalid choice!"+"\033[0m");
@@ -246,7 +252,7 @@ public class SupermarketInventory {
             System.out.println("1. Add Order");
 
 
-            System.out.println("\n4. Return to main menu");
+            System.out.println("\n2. Return to main menu");
         
             System.out.print("-> ");
             try {
@@ -263,14 +269,13 @@ public class SupermarketInventory {
                 Order.addOrder(scanner, prodList, catlist,admin);
                 clrs();
                 break;
-            case 4:
+            case 2:
                 return;
             default:
                 System.out.println("\u001B[31m"+"Invalid choice!"+"\033[0m");
             }
         }while(choice != 4);
     }
-    
     public static void clrs(){
         for(int i =0;i<=10;i++){
             System.out.println("\n");
@@ -278,6 +283,100 @@ public class SupermarketInventory {
     //System.out.print("\033c"); ///Clear screen in console cmd
     }
 
+
+
+
+
+    private static void invReport(ArrayList<Category> categories, ArrayList<Product> products) {
+        System.out.println("\t\u001B[33m=== INVENTORY REPORT ===\u001B[0m");    
+        double totalValue = 0;
+        int totalItems = 0;
+        int lowStockItems = 0;
+    
+        for (Category category : categories) {
+            System.out.println("\n\u001B[36mCategory: " + category.getCatName() + " (" + category.getCatId() + ")\u001B[0m");
+            System.out.println("----------------------------");
+            System.out.printf("%-10s %-20s %-10s %-10s %-15s\n", "ID", "Name", "Price(RM)", "Quantity", "Total Value(RM)");
+    
+            double categoryValue = 0;
+            int categoryItems = 0;
+    
+            for (Product product : products) {
+                if (product.getCatId().equals(category.getCatId())) {
+                    double productValue = product.getPrice() * product.getQty();
+                    System.out.printf("%-10s %-20s %-10.2f %-10d %-15.2f\n", 
+                        product.getID(), product.getName(), product.getPrice(), product.getQty(), productValue);
+                    
+                    categoryValue += productValue;
+                    categoryItems += product.getQty();
+                    
+                    if (product.getQty() <= Product.getReminderQty()) {
+                        lowStockItems++;
+                    }
+                }
+            }
+    
+            System.out.println("----------------------------");
+            System.out.printf("Category Total: %d items, Value: RM %.2f\n", categoryItems, categoryValue);
+    
+            totalValue += categoryValue;
+            totalItems += categoryItems;
+        }
+    
+        System.out.println("\n\u001B[33m=== SUMMARY ===\u001B[0m");
+        System.out.printf("Total Inventory Value: RM %.2f\n", totalValue);  //total value of inventory
+        System.out.printf("Total Number of Items: %d\n", totalItems);
+        System.out.printf("Low Stock Items (<=d): %d\n", Product.getReminderQty(),lowStockItems);
+
+        System.out.println("\n\u001B[33m=== PRODUCT AMOUNT DISTRIBUTION ===\u001B[0m");
+        barChart(categories, products, totalItems);
+
+        System.out.println("\n\u001B[33m=== PRODUCT COST DISTRIBUTION ===\u001B[0m");
+        barChart(categories, products, totalValue, 30);
+    
+    }
+
+    //for quantity chart
+    private static void barChart(ArrayList<Category> categories, ArrayList<Product> products, int totalItems) {
+        for (int i = 0; i < categories.size(); i++) {
+            Category cat = categories.get(i);
+            int catQty = 0;
+            for (Product product : products) {
+                if (product.getCatId().equals(cat.getCatId())) {
+                    catQty += product.getQty();
+                }
+            }
+            
+            int barLength = (int) Math.round(((double)catQty /totalItems) * 20);
+            String bar = "\u001B[42m" + " ".repeat(barLength) + "\u001B[0m";
+            
+            System.out.printf("%-15s [%-20s] %5.2f%%\n", 
+                cat.getCatName(), 
+                bar + (" ".repeat(20-barLength)),   //to ensure all bars are the same length
+                ((double)catQty / totalItems) * 100);
+        }
+    }
+    //for cost chart
+    private static void barChart(ArrayList<Category> categories, ArrayList<Product> products, double totalCost,int maxLength) {
+        for (int i = 0; i < categories.size(); i++) {
+            Category cat = categories.get(i);
+            double catCost = 0;
+            for (Product product : products) {
+                if (product.getCatId().equals(cat.getCatId())) {
+                    catCost += product.getQty() * product.getPrice();
+                }
+            }
+            
+            int barLength = (int) Math.round((catCost/totalCost) * maxLength);
+            String bar = "\u001B[46m" + " ".repeat(barLength) + "\u001B[0m" + " ".repeat(maxLength - barLength);
+            
+            System.out.printf("%-15s [%-20s] %5.2f%%\n", 
+                cat.getCatName(), 
+                bar,   //to ensure all bars are the same length (green + black = maxlength)
+                (catCost / totalCost) * 100);
+        }
+    }
+    
 
 }
 

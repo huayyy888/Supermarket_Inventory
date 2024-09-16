@@ -13,21 +13,30 @@ import java.util.Scanner;
 
 public class Product extends Category{
 
-    
+    private static int reminderQty = 5; 
 	private String prodID;
 	private String name;
 	private double price;
 	private int qty;
 	
 	public Product(String catId, String catName, String prodID, String name, double price, int qty) {
-                super(catId,catName);
-             
+        super(catId,catName);     
 		this.prodID = prodID;
 		this.name = name;
 		this.price = price;
 		this.qty = qty;
 	}
 	
+    public static int getReminderQty(){
+        return reminderQty;
+    }
+
+    //to be used with equals()
+    public Product(String catId, String catName,String name){
+        super(catId,catName);     
+        this.name = name;
+    }
+
 	public String getID() {
 		return prodID;
 	}
@@ -202,7 +211,7 @@ public class Product extends Category{
                 // Print all products in this category
                 for (Product p : productList) {
                     if (p.getCatId().equals(categoryID)) {
-                        if(p.getQty()<=5){
+                        if(p.getQty()<= reminderQty){
                         System.out.printf("%-10s %-20s %-10.2f \u001B[31m%-20d (Restock recommended)\u001B[0m\n",
                                 p.getID(),
                                 p.getName(),
@@ -284,9 +293,9 @@ public class Product extends Category{
             return;     
         }
         // Search for the product in the product list
-        Product productToDelete = null;
+        Product productToDelete = new Product("CT001","Vegetables",prodID);
         for (Product product : productList) {
-            if (product.getID().equals(prodID)) {
+            if (product.equals(productToDelete)) {
                 productToDelete = product;
                 break;
             }
@@ -532,4 +541,20 @@ public class Product extends Category{
         
         return categoryProducts.get(choice);
     }
+
+    @Override   //if two products are same, return true
+    public boolean equals(Object o) {
+        if(o == null)
+            return false;
+        else if (o instanceof Product) {    // if object is a product
+            return this.prodID.equalsIgnoreCase(((Product)o).prodID);
+        }
+        else
+            return false;
+        
+        
+        
+    }
+
+    
 }
