@@ -277,4 +277,12 @@ public class Category {
         System.out.println(e.toString());  //prints the file exception, if exists.
     }
 }
+
+public boolean equals(Object o) {
+    if (o instanceof Category) {
+        return (this.catId.equals(((Category) o).catId));
+    }
+    else
+        return false;
+}
 }
