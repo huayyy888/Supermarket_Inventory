@@ -6,7 +6,8 @@ import java.util.Scanner;
 public class SupermarketInventory {
     
     public static void main(String[] args) {
-       int mainChoice = 0,chances = 3;
+       int mainChoice = 0,
+       chances = 3;
        int kickCount = 0;
        Admin admin = new Admin();       //Call a new admin
        Scanner scanner = new Scanner(System.in);
@@ -309,7 +310,7 @@ public class SupermarketInventory {
                     categoryValue += productValue;
                     categoryItems += product.getQty();
                     
-                    if (product.getQty() <= 5) {
+                    if (product.getQty() <= Product.getReminderQty()) {
                         lowStockItems++;
                     }
                 }
@@ -325,7 +326,7 @@ public class SupermarketInventory {
         System.out.println("\n\u001B[33m=== SUMMARY ===\u001B[0m");
         System.out.printf("Total Inventory Value: RM %.2f\n", totalValue);  //total value of inventory
         System.out.printf("Total Number of Items: %d\n", totalItems);
-        System.out.printf("Low Stock Items (<=5): %d\n", lowStockItems);
+        System.out.printf("Low Stock Items (<=d): %d\n", Product.getReminderQty(),lowStockItems);
 
         System.out.println("\n\u001B[33m=== PRODUCT AMOUNT DISTRIBUTION ===\u001B[0m");
         barChart(categories, products, totalItems);

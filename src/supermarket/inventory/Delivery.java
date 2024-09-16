@@ -9,12 +9,18 @@ public class Delivery {
     private int postCode;
     private String[] address; 
     private Order order;
+    private static double deliveryFee = 10.0;
 
-    public Delivery(String trackNo,String name,int postCode, String[] address){
+    public static double getDeliveryFee(){
+        return deliveryFee;
+    }
+
+    public Delivery(String trackNo,String name,int postCode, String[] address,Order order){
         this.trackNo = trackNo;
         this.name = name;
         this.postCode = postCode;
         this.address = address;
+        this.order = order;
     }
 
     public static String genTrackNo(){
@@ -46,6 +52,7 @@ public class Delivery {
                         receipentName = formatString(receipentName);
                     System.out.printf("Enter address line %d: ",lineNo+1);
                     address[lineNo] = scanner.nextLine().trim();
+                    address[lineNo] = formatString(address[lineNo]);
                     if(address[lineNo].isEmpty()){
                         System.out.println("\u001B[31mPlease enter a valid address.\u001B[0m");
                         continue;
@@ -55,6 +62,7 @@ public class Delivery {
                         //start from line 2 since 
                         System.out.printf("Enter address line %d (Enter to skip): ",lineNo+1);
                         address[lineNo] = scanner.nextLine().trim();
+                        address[lineNo] = formatString(address[lineNo]);
                         if(address[lineNo].isEmpty())
                             break;
                     }
@@ -85,7 +93,7 @@ public class Delivery {
                     System.out.print("Is this ok? (y/n): ");
                     if(scanner.nextLine().trim().equalsIgnoreCase("y")){
                         finish = true;
-                        return (new Delivery(Delivery.genTrackNo(), receipentName, postCode, address));
+                        return (new Delivery(Delivery.genTrackNo(), receipentName, postCode, address,order));
                     }
                 } while(!finish);
 
@@ -107,16 +115,16 @@ public class Delivery {
     @Override
     public String toString(){
         StringBuilder sb = new StringBuilder();
-        sb.append(String.format("\u001B[33mTracking No:\u001B[0m %s\n", trackNo));
-        sb.append(String.format("\u001B[33mOrder No:\u001B[0m %s\n", order.getOrderId()));
-        sb.append(String.format("\u001B[33mRecipient:\u001B[0m %s\n", name));
-        sb.append("\u001B[33mAddress:\u001B[0m\n");
+        sb.append(String.format("Tracking No: %s\n", trackNo));
+        sb.append(String.format("Order No: %s\n", order.getOrderId()));
+        sb.append(String.format("Recipient: %s\n", name));
+        sb.append("Address:\n");
         for (String line : address) {
             if (line != null && !line.isEmpty()) {
                 sb.append(line).append("\n");
             }
         }
-        sb.append(String.format("\u001B[33mPostcode\u001B[0m: %d", postCode));
+        sb.append(String.format("Postcode: %d\n", postCode));
         return sb.toString();
     }
 }

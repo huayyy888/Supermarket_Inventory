@@ -13,7 +13,7 @@ import java.util.Scanner;
 
 public class Product extends Category{
 
-    
+    private static int reminderQty = 5; 
 	private String prodID;
 	private String name;
 	private double price;
@@ -27,6 +27,10 @@ public class Product extends Category{
 		this.qty = qty;
 	}
 	
+    public static int getReminderQty(){
+        return reminderQty;
+    }
+
     //to be used with equals()
     public Product(String catId, String catName,String name){
         super(catId,catName);     
@@ -207,7 +211,7 @@ public class Product extends Category{
                 // Print all products in this category
                 for (Product p : productList) {
                     if (p.getCatId().equals(categoryID)) {
-                        if(p.getQty()<=5){
+                        if(p.getQty()<= reminderQty){
                         System.out.printf("%-10s %-20s %-10.2f \u001B[31m%-20d (Restock recommended)\u001B[0m\n",
                                 p.getID(),
                                 p.getName(),

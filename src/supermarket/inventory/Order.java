@@ -20,8 +20,8 @@ public class Order {
         this.items = new ArrayList<>();
         this.total = 0.0;
     }
-    public void addDelivery(){
-        this.total += 10.00;
+    public void addShipping(double charge){
+        this.total += charge;
     }
 
     public boolean addItem(OrderItem newItem) {
@@ -72,7 +72,7 @@ public class Order {
             System.out.printf("%20s x%2d - RM%.2f each\n", 
                               item.getProduct().getName(), item.getQuantity(), item.getPrice());
         }
-        if(delivery != null){        System.out.printf("\nDelivery: RM%.2f\n", 10.00);    }
+        if(delivery != null){        System.out.printf("\nDelivery: RM%.2f\n", Delivery.getDeliveryFee());    }
         System.out.printf("\nTotal: RM%.2f\n", this.getTotal());
         System.out.println("\u001B[33m=============\u001B[0m");
     }
@@ -178,20 +178,20 @@ public class Order {
             if (order.addItem(item)) {
                 System.out.println("\u001B[32mProduct added to cart.\u001B[0m");
             } else {
-                System.out.println("\u001B[31mInsufficient stock. Product not added to cart.\u001B[0m");
+                System.out.println("\u001B[31mProduct not added to cart.\u001B[0m");
             }
         }
         
         if (order.getItems().isEmpty()) {
             System.out.println("\u001B[31mNo items in cart! Order cancelled.\u001B[0m");
         }else{
-            System.out.print("Add on RM10 for delivery? (y/n):");
+            System.out.printf("Add on RM%.2f for delivery? (y/n):",Delivery.getDeliveryFee());
             Delivery delivery = null;
             if (scanner.nextLine().trim().equalsIgnoreCase("y")) {
                 //delivery instructions
                 delivery = Delivery.addDelivery(scanner, order);
-                if(delivery == null){
-                    order.addDelivery();
+                if(delivery != null){
+                    order.addShipping(Delivery.getDeliveryFee());
                 }
             }
             ///CHECKOUT /////
@@ -220,7 +220,7 @@ public class Order {
                     switch(payChoice){
                         case 1:
                             if(delivery != null){ //means customer selected delivery, cannot pay cash
-                                System.out.print("\u001B[31mSorry, This payment is not supported for delivery.\u001B[0m");
+                                System.out.print("\u001B[31mSorry, This payment is not supported for delivery.\u001B[0m\n");
                                 payChoice = 0;
                             }
                             else{
@@ -278,6 +278,7 @@ public class Order {
     String fileName = this.orderId + ".txt";
     try (FileWriter writer = new FileWriter(fileName)) {
         if(delivery != null){
+            writer.write("*********************************************************\n");
             writer.write(delivery.toString());
         }
         writer.write("\n*********************************************************\n");
@@ -297,7 +298,7 @@ public class Order {
         }
         writer.write("-------------------------------------------------------------\n");
         if(delivery != null)
-            writer.write(String.format("\t\tDelivery Charge: RM %.2f\n", 10.0));
+            writer.write(String.format("\t\tDelivery Charge: RM %.2f\n", Delivery.getDeliveryFee()));
         writer.write(String.format("\tItems: %d\tTotal: RM %4.2f \n", itemCount,this.total));
         //payment start
         writer.write("PAYMENT METHOD: ");
