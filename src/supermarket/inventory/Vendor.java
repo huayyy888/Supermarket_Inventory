@@ -8,14 +8,12 @@ import java.util.List;
 import java.util.Scanner;
 
 public class Vendor {
-    //datatype 
     private String vendorID;
     private String vendorName;
     private String vendorContact;
     private String email;
     private ArrayList<Product> suppliedProducts;
     
-    //construtor parameter
     public Vendor(String vendorID, String vendorName, String vendorContact,String email, ArrayList<Product> suppliedProducts) {
         this.vendorID = vendorID;
         this.vendorName = vendorName;
@@ -23,7 +21,7 @@ public class Vendor {
         this.email = email;
         this.suppliedProducts = suppliedProducts;
     }
-    //getter & setter &toString
+
     public String getVendorID() {
         return vendorID;
     }
@@ -70,7 +68,6 @@ public class Vendor {
                "Contact: " + vendorContact + "\n" +
                "Email: " + email;
     }
-
     //////////////////////////////-------------------VENDOR DRIVER-----------------------////////////////////
 
     //------------------------SELECT PRODUCT-----------------//
@@ -81,87 +78,84 @@ public class Vendor {
         5 size element - 1 size element = get 4th index*/
         Vendor currentVendor = vendorList.get(vendorList.size() - 1); 
         
-        while (true) {
-            // Display all products
+        do {
             Product.displayProd(productList);
+            Product selectedProduct;
             
-            // Let user select a product (from Product class method)
-            Product selectedProduct = Product.selectProductFromCat(scanner, catlist, productList);
+            do {
+                selectedProduct = Product.selectProductFromCat(scanner, catlist, productList);
+            } while (selectedProduct == null);
             
-            if (selectedProduct != null) {
-                // Add the selected product to the vendor's list
-                currentVendor.getSuppliedProducts().add(selectedProduct);  
-                
-                // Ask if user wants to add another product
+            currentVendor.getSuppliedProducts().add(selectedProduct);
+
+            String answer;
+            do {
                 System.out.print("Do you want to add another product? (yes/no): ");
-                String answer = scanner.nextLine().trim().toLowerCase();
-                if (!answer.equals("yes")) {
-                    break;
+                answer = scanner.nextLine().trim().toLowerCase();
+                if (!answer.equals("yes") && !answer.equals("no")) {
+                    System.out.println("\u001B[31mInvalid input. Please enter 'yes' or 'no'.\u001B[0m");
                 }
-            } else {
-                System.out.println("No product selected. Moving on.");
+            } while (!answer.equals("yes") && !answer.equals("no"));
+            
+            if (answer.equals("no")) {
                 break;
             }
-        }
+        } while (true);
     }
-    
-    //----------------------(C) CREATE VENDOR -----------------------//
+
     public static void createNewVendor(Scanner scanner, ArrayList<Vendor> vendorList, ArrayList<Product> productList, ArrayList<Category> catlist) {
         System.out.println("\n\n--ADD A NEW VENDOR--\n");
-
-        // Get vendor details from user
-
-        //vendor name 
         String vendorName;
         do {
             System.out.print("Enter vendor name: ");
             vendorName = scanner.nextLine().trim();
         } while (vendorName.isEmpty());
-        
-        //contact number
+
         String vendorContact;
         do {
             System.out.print("Enter vendor contact: ");
             vendorContact = scanner.nextLine().trim();
         } while (vendorContact.isEmpty());
 
-        //email 
         String email;
         do {
             System.out.print("Enter vendor email: ");
             email = scanner.nextLine().trim();
+            if (email.isEmpty() || !isValidEmail(email)) {
+                System.out.println("\u001B[31mInvalid email format! Please enter a valid email address.\033[0m");
+            }
         } while (email.isEmpty() || !isValidEmail(email));
-    
-        // Generate a unique Vendor ID
-        String vendorID = generateUniqueVendorID(vendorList);
-    
-        // Create a new Vendor object
-        Vendor newVendor = new Vendor(vendorID, vendorName, vendorContact, email, new ArrayList<Product>());
+
+        String vendorID = generateUniqueVendorID(vendorList); // Generate a unique Vendor ID
+        Vendor newVendor = new Vendor(vendorID, vendorName, vendorContact, email, new ArrayList<Product>()); // Create a new Vendor object
+        vendorList.add(newVendor);// Add the new vendor to the list
+        selectProductsForVendor(scanner, vendorList, productList, catlist); // Select products supplied by this vendor
         
-        // Add the new vendor to the list
-        vendorList.add(newVendor);
-        
-        // Select products supplied by this vendor
-        selectProductsForVendor(scanner, vendorList, productList, catlist);
-        
-        // Display all details and confirm
-        System.out.println("\nPlease confirm the following details:");
+        // Display all details and confirm 
+        System.out.println("\n === Please confirm the following details: === ");
         System.out.println(newVendor);
         System.out.println("Supplied Products:");
         for (Product product : newVendor.getSuppliedProducts()) {
             System.out.println("- " + product.getName());
         }
-        
+
         // Ask for confirmation
-        System.out.print("Do you want to add this vendor? (yes/no): ");
-        String confirmation = scanner.nextLine().trim().toLowerCase();
+        String confirmation;
+        while (true) {
+            System.out.print("Do you want to add this vendor? (yes/no): ");
+            confirmation = scanner.nextLine().trim().toLowerCase();
+            if (confirmation.equals("yes") || confirmation.equals("no")) {
+                break;
+            } else {
+                System.out.println("\u001B[31mInvalid input. Please enter 'yes' or 'no'.\u001B[0m");
+            }
+        }
         
         if (confirmation.equals("yes")) {
             writeVendorsToFile(vendorList);
-            System.out.println("New vendor created and saved successfully!");
+            System.out.println("\u001B[32mNew vendor created and saved successfully!\u001B[0m");
         } else {
-            vendorList.remove(newVendor);
-            System.out.println("Vendor addition canceled.");
+            System.out.println("\u001B[31mVendor addition canceled.\u001B[0m");
         }
     }
 
@@ -191,270 +185,289 @@ public class Vendor {
         return false;
     }
 
-    
     // ================================(R) Display vendors========================================
     public static void displayVendors(ArrayList<Vendor> vendorList) {
-    // Display table header
-    System.out.println("\n--DISPLAYING ALL VENDORS--\n");
-    System.out.printf("%-10s | %-50s | %-15s | %-25s | %-30s\n", 
-                      "Vendor ID", "Vendor Name", "Contact", "Email", "Supplied Products ID");
-    System.out.println("-".repeat(130));
-
-    // Loop through all vendors in vendorList and display their information
-    for (Vendor vendor : vendorList) {
-        List<String> productIDs = new ArrayList<>();
-        for (Product product : vendor.getSuppliedProducts()) {
-            productIDs.add(product.getID());
-        }
-        String suppliedProducts = String.join(", ", productIDs);
-
-        System.out.printf("%-10s | %-50s | %-15s | %-25s | %-30s\n",
-            vendor.getVendorID(),
-            vendor.getVendorName(),
-            vendor.getVendorContact(),
-            vendor.getEmail(),
-            suppliedProducts);
-
+        // Display table header
+        System.out.println("\n--DISPLAYING ALL VENDORS--\n");
+        System.out.printf("%-10s | %-50s | %-15s | %-25s | %-30s\n", 
+                        "Vendor ID", "Vendor Name", "Contact", "Email", "Supplied Products ID");
         System.out.println("-".repeat(130));
-    }
-}
-    
-public static ArrayList<Vendor> getVendorList() {
-    ArrayList<Vendor> vendorList = new ArrayList<>();
-    File file = new File("vendor.txt");
-    
-    // Check if the file exists, if not, create an empty one
-    if (!file.exists()) {
-        try {
-            file.createNewFile();
-            System.out.println("Created new vendor.txt file.");
-        } catch (IOException e) {
-            System.out.println("Error creating vendor.txt file");
-            return vendorList; // Return empty list if file can't be created
-        }
-    }
-    
-    try (Scanner fileReader = new Scanner(file)) {
-        while (fileReader.hasNextLine()) {
-            String line = fileReader.nextLine();
-            String[] vendorData = line.split(",");
-            if (vendorData.length >= 5) {
-                ArrayList<Product> suppliedProducts = new ArrayList<>();
-                if (vendorData.length > 4 || !vendorData[4].isEmpty()) {
-                    String[] productNames = vendorData[4].split("\\|");
-                    for (String productName : productNames) {
-                        suppliedProducts.add(new Product(productName.trim(), "", productName, productName, 0.0, 0));
-                    }
-                }
-                
-                Vendor vendor = new Vendor(
-                    vendorData[0].trim(),
-                    vendorData[1].trim(),
-                    vendorData[2].trim(),
-                    vendorData[3].trim(),
-                    suppliedProducts
-                );
-                vendorList.add(vendor);
-            } else {
-                System.out.println("Skipping invalid vendor data: " + line);
-            }
-        }
-    } catch (IOException e) {
-        System.out.println("Error reading vendor.txt file");
-    }
-    return vendorList;
-}
 
-
-//write vendor list into file 
-public static void writeVendorsToFile(ArrayList<Vendor> vendorList) {
-    try {
-        FileWriter writer = new FileWriter("vendor.txt");
-        
+        // Loop through all vendors in vendorList and display their information
         for (Vendor vendor : vendorList) {
-            // Create a string to store product IDs
-            String suppliedProductIDs = "";
-            
-            // Loop through supplied products and add their IDs
-            for (Product product : vendor.getSuppliedProducts()) { 
-                if (!suppliedProductIDs.isEmpty()) {
-                    suppliedProductIDs += "|";  //write produt ID | product ID 
-                }
-                suppliedProductIDs += product.getID();
+            List<String> productIDs = new ArrayList<>();
+            for (Product product : vendor.getSuppliedProducts()) {
+                productIDs.add(product.getID());
             }
-            
-            // Write vendor information to file 
-            writer.write(vendor.getVendorID() + "," +
-                         vendor.getVendorName() + "," +
-                         vendor.getVendorContact() + "," +
-                         vendor.getEmail() + "," +
-                         suppliedProductIDs + "\n");
+            String suppliedProducts = String.join(", ", productIDs);
+            System.out.printf("%-10s | %-50s | %-15s | %-25s | %-30s\n",
+                vendor.getVendorID(),
+                vendor.getVendorName(),
+                vendor.getVendorContact(),
+                vendor.getEmail(),
+                suppliedProducts);
+            System.out.println("-".repeat(130));
+        }
+    }
+        
+    public static ArrayList<Vendor> getVendorList() {
+        ArrayList<Vendor> vendorList = new ArrayList<>();
+        File file = new File("vendor.txt");
+        
+        // Check if the file exists, if not, create an empty one
+        if (!file.exists()) {
+            try {
+                file.createNewFile();
+                System.out.println("Created new vendor.txt file.");
+            } catch (IOException e) {
+                System.out.println("Error creating vendor.txt file");
+                return vendorList; // Return empty list if file can't be created
+            }
         }
         
-        writer.close();
-        System.out.println("Vendor file successfully updated!");
-    } catch (IOException e) {
-        System.out.println("vendor.txt error! Check file.");
-        System.out.println(e.toString());
+        try (Scanner fileReader = new Scanner(file)) {
+            while (fileReader.hasNextLine()) {
+                String line = fileReader.nextLine();
+                String[] vendorData = line.split(",");
+                if (vendorData.length >= 5) {
+                    ArrayList<Product> suppliedProducts = new ArrayList<>();
+                    if (vendorData.length > 4 || !vendorData[4].isEmpty()) {
+                        String[] productNames = vendorData[4].split("\\|");
+                        for (String productName : productNames) {
+                            suppliedProducts.add(new Product(productName.trim(), "", productName, productName, 0.0, 0));
+                        }
+                    }
+                    
+                    Vendor vendor = new Vendor(
+                        vendorData[0].trim(),
+                        vendorData[1].trim(),
+                        vendorData[2].trim(),
+                        vendorData[3].trim(),
+                        suppliedProducts
+                    );
+                    vendorList.add(vendor);
+                } else {
+                    System.out.println("Skipping invalid vendor data: " + line);
+                }
+            }
+        } catch (IOException e) {
+            System.out.println("Error reading vendor.txt file");
+        }
+        return vendorList;
     }
-}
 
-//===============================(U) Edit & Update vendor===============================================
-public static void editVendor(Scanner scanner, ArrayList<Vendor> vendorList, ArrayList<Product> productList) {
-    String confirmation;
+    //write vendor list into file 
+    public static void writeVendorsToFile(ArrayList<Vendor> vendorList) {
+        try {
+            FileWriter writer = new FileWriter("vendor.txt");
+            for (Vendor vendor : vendorList) {
+                String suppliedProductIDs = ""; // Create a string to store product IDs (combine product id)
 
-    System.out.println("\n\n--EDIT A VENDOR--\n");
-    System.out.print("Enter the vendor ID to edit: ");
-    String vendorID = scanner.nextLine().trim();
-    
-    Vendor vendorToEdit = null;
-    for (Vendor vendor : vendorList) {
-        if (vendor.getVendorID().equals(vendorID)) {
-            vendorToEdit = vendor;
-            break;
+                // Loop through supplied products 
+                for (Product product : vendor.getSuppliedProducts()) { 
+                    if (!suppliedProductIDs.isEmpty()) {
+                        suppliedProductIDs += "|";  //write produt ID | product ID 
+                    }
+                    suppliedProductIDs += product.getID(); //combine one string if have many supplied product
+                }
+                //write vendor 
+                writer.write(vendor.getVendorID() + "," +
+                            vendor.getVendorName() + "," +
+                            vendor.getVendorContact() + "," +
+                            vendor.getEmail() + "," +
+                            suppliedProductIDs + "\n");
+            }
+            writer.close();
+            System.out.println("\u001B[32mVendor file successfully updated!\033[0m");
+        } catch (IOException e) {
+            System.out.println("\u001B[31mvendor.txt error! Check file.!\033[0m");
+            System.out.println(e.toString());
         }
     }
-    
-    if (vendorToEdit == null) {
-        System.out.println("\u001B[31mVendor Not Found!!\033[0m");
-        return;
-    }
 
-    int choice;
-    do {
-        choice = 0;
-        System.out.println("\u001B[33m" + "=========================\n    EDIT Vendor " + vendorToEdit.getVendorID() + "\n=========================" + "\u001B[0m");
-        System.out.println("1. Edit Vendor name");
-        System.out.println("2. Edit phone number");
-        System.out.println("3. Edit email");
-        System.out.println("4. Edit supplied products");
-        System.out.println("5. Return back ");
-        System.out.print("Choose an option: ");
+    //===============================(U) Edit & Update vendor===============================================
+    public static void editVendor(Scanner scanner, ArrayList<Vendor> vendorList, ArrayList<Product> productList) {
+        String confirmation;
 
-        choice = getValidInput(scanner, 1, 5); 
-
-        switch (choice) {
-            //edit name 
-            case 1:
-            System.out.print("Enter new vendor name (current: " + vendorToEdit.getVendorName() + "): ");
-            String newName = scanner.nextLine().trim();
-            if (!newName.isEmpty()) {
-                vendorToEdit.setVendorName(newName);
-            }
-            System.out.print("Do you want to save these changes? (yes/no): ");
-            confirmation = scanner.nextLine().trim().toLowerCase();
-            
-            if (confirmation.equals("yes")) {
-                writeVendorsToFile(vendorList);
-                System.out.println("Vendor details updated successfully!");
-            } else {
-                System.out.println("Changes discarded. Vendor details not updated.");
-            }
-            
-            System.out.println("Press enter to continue..");
-            scanner.nextLine();
-            clrs();
-            break;
-            
-            //edit contactnum
-            case 2:
-            System.out.print("Enter new vendor contact (current: " + vendorToEdit.getVendorContact() + "): ");
-            String newContact = scanner.nextLine().trim();
-            if (!newContact.isEmpty()) {
-                vendorToEdit.setVendorContact(newContact);
-            }
-            System.out.print("Do you want to save these changes? (yes/no): ");
-            confirmation = scanner.nextLine().trim().toLowerCase();
-            
-            if (confirmation.equals("yes")) {
-                writeVendorsToFile(vendorList);
-                System.out.println("Vendor details updated successfully!");
-            } else {
-                System.out.println("Changes discarded. Vendor details not updated.");
-            }
-
-            System.out.println("Press enter to continue..");
-            scanner.nextLine();
-            clrs();
-            break;
- 
-            //edit email
-            case 3: 
-            System.out.print("Enter new vendor email (current: " + vendorToEdit.getEmail() + "): ");
-            String newEmail = scanner.nextLine().trim();
-            if (!newEmail.isEmpty()) {
-                if (isValidEmail(newEmail)) {
-                    vendorToEdit.setEmail(newEmail);
-                } else {
-                    System.out.println("Invalid email format. Email not updated.");
-                }
-            }
-            System.out.print("Do you want to save these changes? (yes/no): ");
-            confirmation = scanner.nextLine().trim().toLowerCase();
-            
-            if (confirmation.equals("yes")) {
-                writeVendorsToFile(vendorList);
-                System.out.println("Vendor details updated successfully!");
-            } else {
-                System.out.println("Changes discarded. Vendor details not updated.");
-            }
-
-            System.out.println("Press enter to continue..");
-            scanner.nextLine();
-            clrs();
-            break;
-
-            //edit supplied product
-            case 4: 
-            System.out.println("Current supplied products:");
-                ArrayList<Product> suppliedProducts = vendorToEdit.getSuppliedProducts();
-                for (int i = 0; i < suppliedProducts.size(); i++) {
-                    System.out.println((i + 1) + ". " + suppliedProducts.get(i).getName());
-                }
-                
-                System.out.print("Enter the number of the product you want to edit (or 0 to cancel): ");
-                int productChoice = getValidInput(scanner, 0, suppliedProducts.size());
-                
-                if (productChoice != 0) {
-                    Product productToEdit = suppliedProducts.get(productChoice - 1);
-                    System.out.println("Editing product: " + productToEdit.getName());
-                    
-                    System.out.println("\n\nAvailable products:");
-                    for (int i = 0; i < productList.size(); i++) {
-                        System.out.println((i + 1) + ". " + productList.get(i).getName());
-                    }
-                    
-                    System.out.print("Enter the number of the new product to replace it with: ");
-                    int newProductChoice = getValidInput(scanner, 1, productList.size());
-                    Product newProduct = productList.get(newProductChoice - 1);
-                    
-                    suppliedProducts.set(productChoice - 1, newProduct);
-                    System.out.println("Product updated successfully.");
-                    
-                    System.out.print("Do you want to replace " + productToEdit.getName() + " with " + newProduct.getName() + "? (yes/no): ");
-                    confirmation = scanner.nextLine().trim().toLowerCase();
-                    if (confirmation.equals("yes")) {
-                        suppliedProducts.set(productChoice - 1, newProduct);
-                        writeVendorsToFile(vendorList);
-                        System.out.println("Product updated and changes saved successfully!");
-                    } else {
-                        System.out.println("Changes discarded. Vendor's supplied products not updated.");
-                    }
-                } else {
-                    System.out.println("Editing cancelled.");
-                }
-                System.out.println("Press enter to continue..");
-                scanner.nextLine();
-                clrs();
+        System.out.println("\n\n--EDIT A VENDOR--\n");
+        System.out.print("Enter the vendor ID to edit: ");
+        String vendorID = scanner.nextLine().trim();
+        //check vendor id 
+        Vendor vendorToEdit = null;
+        for (Vendor vendor : vendorList) {
+            if (vendor.getVendorID().equals(vendorID)) {
+                vendorToEdit = vendor;
                 break;
-            case 5:
-            return;
-            default:
-                System.out.println("\u001B[31mInvalid choice!\033[0m");
+            }
         }
-    }while(choice!=5); 
-}
-    
+        
+        if (vendorToEdit == null) {
+            System.out.println("\u001B[31mVendor Not Found!!\033[0m");
+            return;
+        }
+
+        int choice;
+        do {
+            choice = 0;
+            System.out.println("\u001B[33m" + "=========================\n    EDIT Vendor " + vendorToEdit.getVendorID() + "\n=========================" + "\u001B[0m");
+            System.out.println("1. Edit Vendor name");
+            System.out.println("2. Edit phone number");
+            System.out.println("3. Edit email");
+            System.out.println("4. Edit supplied products");
+            System.out.println("5. Return back ");
+            System.out.print("Choose an option: ");
+
+            choice = getValidInput(scanner, 1, 5); 
+            switch (choice) {
+                //edit name
+                case 1: 
+                    System.out.print("Enter new vendor name (current: " + vendorToEdit.getVendorName() + "): ");
+                    String newName = scanner.nextLine().trim();
+                    if (!newName.isEmpty()) {
+                        String oldName = vendorToEdit.getVendorName();
+                        vendorToEdit.setVendorName(newName);
+                    do {
+                        System.out.print("Do you want to save these changes? (yes/no): ");
+                        confirmation = scanner.nextLine().trim().toLowerCase();
+                        if (!confirmation.equals("yes") && !confirmation.equals("no")) {
+                            System.out.println("\u001B[31mInvalid input. Please enter 'yes' or 'no'.\u001B[0m");
+                        }
+                    } while (!confirmation.equals("yes") && !confirmation.equals("no"));
+                        
+                        if (confirmation.equals("yes")) {
+                            writeVendorsToFile(vendorList);
+                            System.out.println("\u001B[32mVendor details updated successfully!\u001B[0m");
+                        } else {
+                            vendorToEdit.setVendorName(oldName);
+                            System.out.println("\u001B[31mChanges discarded. Vendor details not updated.\u001B[0m");
+                        }
+                    } else {
+                        System.out.println("No changes made.");
+                    }
+                    
+                    System.out.println("Press enter to continue..");
+                    scanner.nextLine();
+                    clrs();
+                    break;
+                
+                //edit contactnum
+                case 2:
+                    String oldContact = vendorToEdit.getVendorContact();
+                    while (true) {
+                        System.out.print("Enter new vendor contact (current: " + oldContact + "): ");
+                        String newContact = scanner.nextLine().trim();
+                        if (newContact.isEmpty()) {
+                            System.out.println("\\u001B[31mContact cannot be empty. Please try again.\u001B[0m");
+                        } else {
+                            vendorToEdit.setVendorContact(newContact);
+                            break;
+                        }
+                    }
+                    do {
+                        System.out.print("Do you want to save these changes? (yes/no): ");
+                        confirmation = scanner.nextLine().trim().toLowerCase();
+                        if (!confirmation.equals("yes") && !confirmation.equals("no")) {
+                            System.out.println("\u001B[31mInvalid input. Please enter 'yes' or 'no'.\u001B[0m");
+                        }
+                    } while (!confirmation.equals("yes") && !confirmation.equals("no"));
+                    
+                    if (confirmation.equals("yes")) {
+                        writeVendorsToFile(vendorList);
+                        System.out.println("\u001B[32mVendor contact updated successfully!\u001B[0m");
+                    } else {
+                        vendorToEdit.setVendorContact(oldContact);
+                        System.out.println("\u001B[31mChanges discarded. Vendor contact not updated.\u001B[0m");
+                    }
+
+                    System.out.println("Press enter to continue..");
+                    scanner.nextLine();
+                    clrs();
+                    break;
+
+                //edit email
+                case 3: 
+                    String oldEmail = vendorToEdit.getEmail();
+                    while (true) {
+                        System.out.print("Enter new vendor email (current: " + oldEmail + "): ");
+                        String newEmail = scanner.nextLine().trim();
+                        if (newEmail.isEmpty()) {
+                            System.out.println("\u001B[31mEmail cannot be empty. Please try again.\u001B[0m");
+                        } else if (!isValidEmail(newEmail)) {
+                            System.out.println("\u001B[31mInvalid email format. Please try again.\u001B[0m");
+                        } else {
+                            vendorToEdit.setEmail(newEmail);
+                            break;
+                        }
+                    }
+                    System.out.print("Do you want to save these changes? (yes/no): ");
+                    confirmation = scanner.nextLine().trim().toLowerCase();
+                    
+                    if (confirmation.equals("yes")) {
+                        writeVendorsToFile(vendorList);
+                        System.out.println("\u001B[32mVendor email updated successfully!\u001B[0m");
+                    } else {
+                        vendorToEdit.setEmail(oldEmail);
+                        System.out.println("\u001B[31mChanges discarded. Vendor email not updated.\u001B[0m");
+                    }
+
+                    System.out.println("Press enter to continue..");
+                    scanner.nextLine();
+                    clrs();
+                    break;
+
+                //edit supplied product
+                case 4: 
+                    System.out.println("Current supplied products:");
+                    ArrayList<Product> suppliedProducts = vendorToEdit.getSuppliedProducts();
+                    for (int i = 0; i < suppliedProducts.size(); i++) {
+                        System.out.println((i + 1) + ". " + suppliedProducts.get(i).getName());
+                    }
+                    
+                    System.out.print("Enter the number of the product you want to edit (or 0 to cancel): ");
+                    int productChoice = getValidInput(scanner, 0, suppliedProducts.size());
+                    
+                    if (productChoice != 0) {
+                        Product productToEdit = suppliedProducts.get(productChoice - 1);
+                        System.out.println("Editing product: " + productToEdit.getID());
+                        
+                        System.out.println("\n\nAvailable products:");
+                        for (int i = 0; i < productList.size(); i++) {
+                            System.out.println((i + 1) + ". " + productList.get(i).getName());
+                        }
+                        
+                        System.out.print("Enter the number of the new product to replace it with: ");
+                        int newProductChoice = getValidInput(scanner, 1, productList.size());
+                        Product newProduct = productList.get(newProductChoice - 1);
+                        
+                        do {
+                            System.out.print("Do you want to replace " + productToEdit.getID() + " with " + newProduct.getID() + "? (yes/no): ");
+                            confirmation = scanner.nextLine().trim().toLowerCase();
+                            if (!confirmation.equals("yes") && !confirmation.equals("no")) {
+                                System.out.println("\u001B[31mInvalid input. Please enter 'yes' or 'no'.\u001B[0m");
+                            }
+                        } while (!confirmation.equals("yes") && !confirmation.equals("no"));
+                        
+                        if (confirmation.equals("yes")) {
+                            suppliedProducts.set(productChoice - 1, newProduct);
+                            writeVendorsToFile(vendorList);
+                        } else {
+                            System.out.println("Changes discarded. Vendor's supplied products not updated.");
+                        }
+                    } else {
+                        System.out.println("Editing cancelled.");
+                    }
+                    System.out.println("Press enter to continue..");
+                    scanner.nextLine();
+                    clrs();
+                    break;
+                case 5:
+                    return;
+                default:
+                    System.out.println("\u001B[31mInvalid choice!\033[0m");
+            }
+        }while(choice!=5); 
+    }
+            
     // ==========================================(D) Delete vendor =====================================================
     public static void deleteVendor(ArrayList<Vendor> vendorList) {
         Scanner scanner = new Scanner(System.in);
@@ -469,24 +482,33 @@ public static void editVendor(Scanner scanner, ArrayList<Vendor> vendorList, Arr
                 break;
             }
         }
-        
+
         if (vendorToDelete == null) {
-            System.out.println("Vendor not found!");
+            System.out.println("\u001B[31mVendor not found!\u001B[0m");
         } else {
-            System.out.println("Please confirm to delete the following vendor:");
+            System.out.println("Please confirm to delete the following vendor:\n");
             System.out.println(vendorToDelete);
             System.out.println("Supplied Products:");
             for (Product product : vendorToDelete.getSuppliedProducts()) {
                 System.out.println("- " + product.getID());
             }
 
-            System.out.print("Do you want to delete this vendor permanently? (yes/no, default is no): ");
-            if (scanner.nextLine().trim().equalsIgnoreCase("yes")) {
+            String confirmation;
+            while (true) {
+                System.out.print("\nDo you want to delete this vendor permanently? (yes/no): ");
+                confirmation = scanner.nextLine().trim().toLowerCase();
+                if (confirmation.equals("yes") || confirmation.equals("no")) {
+                    break;
+                }
+                System.out.print("\u001B[31mInvalid input. Please enter 'yes' or 'no'.\u001B[0m");
+            }
+
+            if (confirmation.equals("yes")) {
                 vendorList.remove(vendorToDelete);
                 writeVendorsToFile(vendorList);
-                System.out.println("Vendor deleted successfully!");
+                System.out.println("\u001B[32m**Vendor deleted successfully!**\u001B[0m");
             } else {
-                System.out.println("**Vendor deletion canceled.**");
+                System.out.println("\u001B[31m**Vendor deletion canceled.**\u001B[0m");
             }
         }
     }
@@ -494,8 +516,6 @@ public static void editVendor(Scanner scanner, ArrayList<Vendor> vendorList, Arr
     //===================================REQUEST TO RESTOCK==================================================
     public static void requestRestock(Scanner scanner, ArrayList<Vendor> vendorList, ArrayList<Product> productList) {
         System.out.println("\n--REQUEST RESTOCK--\n");
-
-        // Select product
         System.out.println("Select a product to restock:");
         for (int i = 0; i < productList.size(); i++) {
             System.out.printf("%d. %s\n", i + 1, productList.get(i).getName());
@@ -513,9 +533,8 @@ public static void editVendor(Scanner scanner, ArrayList<Vendor> vendorList, Arr
                 }
             }
         }
-
         if (supplierVendors.isEmpty()) {
-            System.out.println("No vendors supply this product. Restock request cancelled.");
+            System.out.println("\u001B[31mNo vendors supply this product. Restock request cancelled.\u001B[0m");
             return;
         }
 
@@ -542,25 +561,30 @@ public static void editVendor(Scanner scanner, ArrayList<Vendor> vendorList, Arr
         System.out.printf("Cost per unit: RM %.2f\n", costPerUnit);
         System.out.printf("Total cost: RM %.2f\n", totalCost);
 
-        System.out.print("\nConfirm restock request? (yes/no): ");
-        if (scanner.nextLine().trim().equalsIgnoreCase("yes")) {
-            
+        String confirmation;
+        do {
+            System.out.print("\nConfirm restock request? (yes/no): ");
+            confirmation = scanner.nextLine().trim().toLowerCase();
+            if (!confirmation.equals("yes") && !confirmation.equals("no")) {
+                System.out.println("\u001B[31mInvalid input. Please enter 'yes' or 'no'.\u001B[0m");
+            }
+        } while (!confirmation.equals("yes") && !confirmation.equals("no"));
+
+        if (confirmation.equals("yes")) {
             selectedProduct.restock(quantity);                                         
-            System.out.println("Restock request confirmed and sent to the vendor.");
-            
+            System.out.println("\u001B[32mRestock request confirmed and sent to the vendor.\u001B[0m");
             Product.writeProd(productList);
         } else {
-            System.out.println("Restock request cancelled.");
+            System.out.println("\u001B[31mRestock request cancelled.\u001B[0m");
         }
     }
-    
-    //VALID NUMBER INPUT 
+
     private static int getValidInput(Scanner scanner, int min, int max) {
         int input;
         do {
             System.out.printf("Enter a number between %d and %d: ", min, max);
             while (!scanner.hasNextInt()) {
-                System.out.println("That's not a valid number. Please try again.");
+                System.out.println("\u001B[31mThat's not a valid number. Please try again.\u001B[0m");
                 scanner.next();
             }
             input = scanner.nextInt();
@@ -570,8 +594,8 @@ public static void editVendor(Scanner scanner, ArrayList<Vendor> vendorList, Arr
     }
 
     public static void clrs(){
-        for(int i =0;i<=10;i++){
-            System.out.println("\n");
+            for(int i =0;i<=10;i++){
+                System.out.println("\n");
+            }
         }
-    }
 }

@@ -91,9 +91,6 @@ public class Order {
     private String generateOrderId() {
         return String.format("%s-%03d", getCurrentDate(),(int)(Math.random()*1000));
     }
-    private String generateShippin() {
-        return String.format("%s-%03d", getCurrentDate(),(int)(Math.random()*1000));
-    }
 
     private String getCurrentDate() {   //to get date of system
         LocalDate currentDate = LocalDate.now();    
