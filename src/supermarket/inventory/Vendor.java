@@ -301,6 +301,8 @@ public static void writeVendorsToFile(ArrayList<Vendor> vendorList) {
 
 //===============================(U) Edit & Update vendor===============================================
 public static void editVendor(Scanner scanner, ArrayList<Vendor> vendorList, ArrayList<Product> productList) {
+    String confirmation;
+
     System.out.println("\n\n--EDIT A VENDOR--\n");
     System.out.print("Enter the vendor ID to edit: ");
     String vendorID = scanner.nextLine().trim();
@@ -314,55 +316,143 @@ public static void editVendor(Scanner scanner, ArrayList<Vendor> vendorList, Arr
     }
     
     if (vendorToEdit == null) {
-        System.out.println("Vendor not found!");
+        System.out.println("\u001B[31mVendor Not Found!!\033[0m");
         return;
     }
 
-    System.out.println("Editing details for: ");
-    System.out.println(vendorToEdit);
-    
-    // Edit Vendor Name
-    System.out.print("Enter new vendor name (current: " + vendorToEdit.getVendorName() + "): ");
-    String newName = scanner.nextLine().trim();
-    if (!newName.isEmpty()) {
-        vendorToEdit.setVendorName(newName);
-    }
-    
-    // Edit Vendor Contact
-    System.out.print("Enter new vendor contact (current: " + vendorToEdit.getVendorContact() + "): ");
-    String newContact = scanner.nextLine().trim();
-    if (!newContact.isEmpty()) {
-        vendorToEdit.setVendorContact(newContact);
-    }
+    int choice;
+    do {
+        choice = 0;
+        System.out.println("\u001B[33m" + "=========================\n    EDIT Vendor " + vendorToEdit.getVendorID() + "\n=========================" + "\u001B[0m");
+        System.out.println("1. Edit Vendor name");
+        System.out.println("2. Edit phone number");
+        System.out.println("3. Edit email");
+        System.out.println("4. Edit supplied products");
+        System.out.println("5. Return back ");
+        System.out.print("Choose an option: ");
 
-    // Edit Vendor Email
-    System.out.print("Enter new vendor email (current: " + vendorToEdit.getEmail() + "): ");
-    String newEmail = scanner.nextLine().trim();
-    if (!newEmail.isEmpty()) {
-        if (isValidEmail(newEmail)) {
-            vendorToEdit.setEmail(newEmail);
-        } else {
-            System.out.println("Invalid email format. Email not updated.");
+        choice = getValidInput(scanner, 1, 5); 
+
+        switch (choice) {
+            //edit name 
+            case 1:
+            System.out.print("Enter new vendor name (current: " + vendorToEdit.getVendorName() + "): ");
+            String newName = scanner.nextLine().trim();
+            if (!newName.isEmpty()) {
+                vendorToEdit.setVendorName(newName);
+            }
+            System.out.print("Do you want to save these changes? (yes/no): ");
+            confirmation = scanner.nextLine().trim().toLowerCase();
+            
+            if (confirmation.equals("yes")) {
+                writeVendorsToFile(vendorList);
+                System.out.println("Vendor details updated successfully!");
+            } else {
+                System.out.println("Changes discarded. Vendor details not updated.");
+            }
+            
+            System.out.println("Press enter to continue..");
+            scanner.nextLine();
+            clrs();
+            break;
+            
+            //edit contactnum
+            case 2:
+            System.out.print("Enter new vendor contact (current: " + vendorToEdit.getVendorContact() + "): ");
+            String newContact = scanner.nextLine().trim();
+            if (!newContact.isEmpty()) {
+                vendorToEdit.setVendorContact(newContact);
+            }
+            System.out.print("Do you want to save these changes? (yes/no): ");
+            confirmation = scanner.nextLine().trim().toLowerCase();
+            
+            if (confirmation.equals("yes")) {
+                writeVendorsToFile(vendorList);
+                System.out.println("Vendor details updated successfully!");
+            } else {
+                System.out.println("Changes discarded. Vendor details not updated.");
+            }
+
+            System.out.println("Press enter to continue..");
+            scanner.nextLine();
+            clrs();
+            break;
+ 
+            //edit email
+            case 3: 
+            System.out.print("Enter new vendor email (current: " + vendorToEdit.getEmail() + "): ");
+            String newEmail = scanner.nextLine().trim();
+            if (!newEmail.isEmpty()) {
+                if (isValidEmail(newEmail)) {
+                    vendorToEdit.setEmail(newEmail);
+                } else {
+                    System.out.println("Invalid email format. Email not updated.");
+                }
+            }
+            System.out.print("Do you want to save these changes? (yes/no): ");
+            confirmation = scanner.nextLine().trim().toLowerCase();
+            
+            if (confirmation.equals("yes")) {
+                writeVendorsToFile(vendorList);
+                System.out.println("Vendor details updated successfully!");
+            } else {
+                System.out.println("Changes discarded. Vendor details not updated.");
+            }
+
+            System.out.println("Press enter to continue..");
+            scanner.nextLine();
+            clrs();
+            break;
+
+            //edit supplied product
+            case 4: 
+            System.out.println("Current supplied products:");
+                ArrayList<Product> suppliedProducts = vendorToEdit.getSuppliedProducts();
+                for (int i = 0; i < suppliedProducts.size(); i++) {
+                    System.out.println((i + 1) + ". " + suppliedProducts.get(i).getName());
+                }
+                
+                System.out.print("Enter the number of the product you want to edit (or 0 to cancel): ");
+                int productChoice = getValidInput(scanner, 0, suppliedProducts.size());
+                
+                if (productChoice != 0) {
+                    Product productToEdit = suppliedProducts.get(productChoice - 1);
+                    System.out.println("Editing product: " + productToEdit.getName());
+                    
+                    System.out.println("\n\nAvailable products:");
+                    for (int i = 0; i < productList.size(); i++) {
+                        System.out.println((i + 1) + ". " + productList.get(i).getName());
+                    }
+                    
+                    System.out.print("Enter the number of the new product to replace it with: ");
+                    int newProductChoice = getValidInput(scanner, 1, productList.size());
+                    Product newProduct = productList.get(newProductChoice - 1);
+                    
+                    suppliedProducts.set(productChoice - 1, newProduct);
+                    System.out.println("Product updated successfully.");
+                    
+                    System.out.print("Do you want to replace " + productToEdit.getName() + " with " + newProduct.getName() + "? (yes/no): ");
+                    confirmation = scanner.nextLine().trim().toLowerCase();
+                    if (confirmation.equals("yes")) {
+                        suppliedProducts.set(productChoice - 1, newProduct);
+                        writeVendorsToFile(vendorList);
+                        System.out.println("Product updated and changes saved successfully!");
+                    } else {
+                        System.out.println("Changes discarded. Vendor's supplied products not updated.");
+                    }
+                } else {
+                    System.out.println("Editing cancelled.");
+                }
+                System.out.println("Press enter to continue..");
+                scanner.nextLine();
+                clrs();
+                break;
+            case 5:
+            return;
+            default:
+                System.out.println("\u001B[31mInvalid choice!\033[0m");
         }
-    }
-    
-    //!!!!!!!!!!!!!!EDIT SUPPLIED PRODUCT!!!!!!!!!111111111
-    // Confirm changes
-    System.out.println("\nUpdated vendor details:");
-    System.out.println(vendorToEdit);
-    System.out.println("Supplied Products:");
-    for (Product product : vendorToEdit.getSuppliedProducts()) {
-        System.out.println("- " + product.getName());
-    }
-    System.out.print("Do you want to save these changes? (yes/no): ");
-    String confirmation = scanner.nextLine().trim().toLowerCase();
-    
-    if (confirmation.equals("yes")) {
-        writeVendorsToFile(vendorList);
-        System.out.println("Vendor details updated successfully!");
-    } else {
-        System.out.println("Changes discarded. Vendor details not updated.");
-    }
+    }while(choice!=5); 
 }
     
     // ==========================================(D) Delete vendor =====================================================
@@ -416,10 +506,13 @@ public static void editVendor(Scanner scanner, ArrayList<Vendor> vendorList, Arr
         // Find vendors that supply this product
         ArrayList<Vendor> supplierVendors = new ArrayList<>();
         for (Vendor vendor : vendorList) {
-        if (vendor.getSuppliedProducts().stream().anyMatch(p -> p.getID().equals(selectedProduct.getID()))) {
-            supplierVendors.add(vendor);
+            for (Product product : vendor.getSuppliedProducts()) {
+                if (product.getID().equals(selectedProduct.getID())) {
+                    supplierVendors.add(vendor);
+                    break;  
+                }
+            }
         }
-    }
 
         if (supplierVendors.isEmpty()) {
             System.out.println("No vendors supply this product. Restock request cancelled.");
@@ -451,7 +544,7 @@ public static void editVendor(Scanner scanner, ArrayList<Vendor> vendorList, Arr
 
         System.out.print("\nConfirm restock request? (yes/no): ");
         if (scanner.nextLine().trim().equalsIgnoreCase("yes")) {
-            //updateProductQty(selectedProduct.getID(), quantity);
+            
             selectedProduct.restock(quantity);                                         
             System.out.println("Restock request confirmed and sent to the vendor.");
             
@@ -460,8 +553,6 @@ public static void editVendor(Scanner scanner, ArrayList<Vendor> vendorList, Arr
             System.out.println("Restock request cancelled.");
         }
     }
-
-    //FOR REQUEST TO RESTOCK (PRODUCT TEXT FILE)
     
     //VALID NUMBER INPUT 
     private static int getValidInput(Scanner scanner, int min, int max) {
@@ -478,4 +569,9 @@ public static void editVendor(Scanner scanner, ArrayList<Vendor> vendorList, Arr
         return input;
     }
 
+    public static void clrs(){
+        for(int i =0;i<=10;i++){
+            System.out.println("\n");
+        }
+    }
 }
