@@ -446,59 +446,23 @@ public static void editVendor(Scanner scanner, ArrayList<Vendor> vendorList, Arr
         System.out.printf("Product: %s\n", selectedProduct.getName());
         System.out.printf("Vendor: %s\n", selectedVendor.getVendorName());
         System.out.printf("Quantity: %d\n", quantity);
-        System.out.printf("Cost per unit: $%.2f\n", costPerUnit);
-        System.out.printf("Total cost: $%.2f\n", totalCost);
+        System.out.printf("Cost per unit: RM %.2f\n", costPerUnit);
+        System.out.printf("Total cost: RM %.2f\n", totalCost);
 
         System.out.print("\nConfirm restock request? (yes/no): ");
         if (scanner.nextLine().trim().equalsIgnoreCase("yes")) {
-            updateProductQty(selectedProduct.getID(), quantity);                                                       //update product qty method 
+            //updateProductQty(selectedProduct.getID(), quantity);
+            selectedProduct.restock(quantity);                                         
             System.out.println("Restock request confirmed and sent to the vendor.");
+            
+            Product.writeProd(productList);
         } else {
             System.out.println("Restock request cancelled.");
         }
     }
 
     //FOR REQUEST TO RESTOCK (PRODUCT TEXT FILE)
-    private static void updateProductQty(String productId, int quantityToAdd) {
-        File file = new File("product.txt");
-        ArrayList<String> fileContent = new ArrayList<>();
-        boolean productFound = false;
     
-        try (Scanner fileReader = new Scanner(file)) {
-            while (fileReader.hasNextLine()) {
-                String line = fileReader.nextLine();
-                String[] productData = line.split(",");
-                if (productData[1].trim().equals(productId)) {
-                    productFound = true;
-                    int currentQuantity = Integer.parseInt(productData[4].trim()); 
-                    int newQuantity = currentQuantity + quantityToAdd;
-                    productData[4] = String.valueOf(newQuantity);
-                    line = String.join(",", productData);
-                    System.out.println("Updating product " + productId + 
-                                      "\n=============================\n"+" --->> Old quantity: " + currentQuantity + ", New quantity: " + newQuantity);
-                }
-                fileContent.add(line);
-            }
-        } catch (IOException e) {
-            System.out.println("\u001B[31mError reading product.txt file\u001B[0m");
-            return;
-        }
-    
-        if (!productFound) {
-            System.out.println("\u001B[31mProduct with ID " + productId + " not found in the file.\u001B[0m");
-            return;
-        }
-    
-        try (FileWriter writer = new FileWriter(file)) {
-            for (String line : fileContent) {
-                writer.write(line + "\n");
-            }
-            System.out.println("\u001B[32mProduct quantity updated successfully in the file!\u001B[0m");
-        } catch (IOException e) {
-            System.out.println("\u001B[31mError writing to product.txt file \u001B[0m");
-        }
-    }
-
     //VALID NUMBER INPUT 
     private static int getValidInput(Scanner scanner, int min, int max) {
         int input;

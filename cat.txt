@@ -2,4 +2,4 @@ CT001,Seafood
 CT002,Fruits
 CT003,Electrics
 CT373,Beer
-CT004,Instant Noodles
+CT004,Instant noodles
