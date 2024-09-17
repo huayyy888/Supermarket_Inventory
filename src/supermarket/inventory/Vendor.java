@@ -598,16 +598,4 @@ public class Vendor {
                 System.out.println("\n");
             }
         }
-
-    public boolean getConfirmation(Scanner scanner, String message) {
-        String confirmation;
-        do {
-            System.out.print(message);
-            confirmation = scanner.nextLine().trim().toLowerCase();
-            if (!confirmation.equals("yes") && !confirmation.equals("no")) {
-                System.out.println("\u001B[31mInvalid input. Please enter 'yes' or 'no'.\u001B[0m");
-            }
-        } while (!confirmation.equals("yes") && !confirmation.equals("no"));
-        return confirmation.equals("yes");
-    }
 }
