@@ -163,14 +163,14 @@ public class Category {
 
     //check if long enough and consist only numbers and whitespaces
    private static Boolean checkCat(String string){
-       if(string.length()<2)
+       if(string.length()<3)
             return false;
        else if(Character.isWhitespace(string.charAt(0))){
            return false;
        }
        else{
            for(int i=0;i<string.length();i++){
-              if(!(Character.isAlphabetic(string.charAt(i))))
+              if(!(Character.isAlphabetic(string.charAt(i))||Character.isWhitespace(string.charAt(i))))
                   return false;
            }
    

@@ -32,9 +32,9 @@ public class Product extends Category{
     }
 
     //to be used with equals()
-    public Product(String catId, String catName,String name){
+    public Product(String catId, String catName,String prodID){
         super(catId,catName);     
-        this.name = name;
+        this.prodID = prodID;
     }
 
 	public String getID() {
@@ -175,7 +175,7 @@ public class Product extends Category{
             productList.add(newProduct);
             try (FileWriter writer = new FileWriter("product.txt", true)) {
                 writer.write(newProduct.getCatId() + ","+ productID + "," + productName + "," + productPrice + "," + productQty + "\n");
-                System.out.println("\u001B[32mNew product"+ productName +"created and saved successfully!\u001B[0m");
+                System.out.println("\u001B[32mNew product "+ productName +" created and saved successfully!\u001B[0m");
             } catch (IOException e) {
                 System.out.println("\u001B[31mFile error! Check file\u001B[0m");
                 System.out.println(e.toString());  
@@ -281,21 +281,21 @@ public class Product extends Category{
         }
     }
     
-    public static void deleteProd(ArrayList<Product> productList) {
-    Scanner scanner = new Scanner(System.in);    
+    public static void deleteProd(Scanner scanner, ArrayList<Product> productList, ArrayList<Vendor> vendorList) {
     do {
         System.out.println("\n\n\u001B[33m-- DELETE A PRODUCT --\u001B[0m\n");
         System.out.println("\u001B[36mNOTE: Press Enter without input to return to menu.\u001B[0m");
         System.out.print("Enter the product number/ID to delete (e.g. 1234567): ");
         String prodID = scanner.nextLine().trim();
         if(prodID.isEmpty()){
-            scanner.close();
             return;     
         }
         // Search for the product in the product list
-        Product productToDelete = new Product("CT001","Vegetables",prodID);
+        Product productToDelete = null;
+        Product productToSearch = new Product("","",prodID); //vegetables is just a placeholder
+        
         for (Product product : productList) {
-            if (product.equals(productToDelete)) {
+            if (product.equals(productToSearch)) {
                 productToDelete = product;
                 break;
             }
@@ -304,7 +304,9 @@ public class Product extends Category{
         if (productToDelete == null) {
             // If product not found, ask if the user wants to search again
             System.out.print("\u001B[31mProduct not found! \u001B[0m");
-        } else {
+        } else if (productToDelete.hasVendor(vendorList)) {
+            System.out.print("\u001B[31mPlease REMOVE VENDORS related to this product before deleting it! \u001B[0m");
+        }else {
             // If the product is found, confirm deletion
             System.out.println("\n\u001B[33mPlease confirm you want to delete the following product:\u001B[0m");
             System.out.println(productToDelete);
@@ -322,7 +324,7 @@ public class Product extends Category{
         System.out.print("\nDo you want to try again? (yes/no, default is no): ");
         
     } while (scanner.nextLine().trim().equalsIgnoreCase("yes"));
-        scanner.close();
+        
     }
     
     public static void editProdMenu(Scanner scanner,ArrayList<Product> productList, ArrayList<Category> categories) {
@@ -542,6 +544,17 @@ public class Product extends Category{
         return categoryProducts.get(choice);
     }
 
+    public boolean hasVendor(ArrayList<Vendor> vendorList){
+        for(Vendor vendor: vendorList){
+            for(Product suppliedProduct:vendor.getSuppliedProducts()){
+                if(this.equals(suppliedProduct)){
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
     @Override   //if two products are same, return true
     public boolean equals(Object o) {
         if(o == null)
@@ -551,9 +564,18 @@ public class Product extends Category{
         }
         else
             return false;
+    }
+
+    public void restock(int restockAmt){
+        int oldQty = this.qty;
+        int newQty = oldQty + restockAmt;
+        System.out.printf("==========================\nRestocking %s %s...\n==========================\n",this.prodID,this.name);
         
+        System.out.printf("Old stock count: %d\n",oldQty);
+        System.out.printf("\u001B[32mNew stock count: %d\u001B[0m\n",newQty);
         
-        
+
+        this.qty = newQty;
     }
 
     

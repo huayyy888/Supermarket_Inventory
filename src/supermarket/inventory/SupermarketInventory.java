@@ -1,7 +1,6 @@
 package supermarket.inventory;
 import java.util.ArrayList;
 import java.util.InputMismatchException;
-import java.util.List;
 import java.util.Scanner;
 
 public class SupermarketInventory {
@@ -29,7 +28,7 @@ public class SupermarketInventory {
         
         clrs();
         do {
-            System.out.println("\u001B[33m"+"===========================\nLogin successfully as " + admin.getID() + "!\n"+"Welcome to: Botitle Supermarket IMS:\n==========================="+"\u001B[0m");
+            System.out.println("\u001B[33m"+"===========================\u001B[0m\nLogin successfully as \u001B[34m" + admin.getID() + "\u001B[0m!\n"+"\u001B[33mWelcome to: Botitle Supermarket IMS:\n==========================="+"\u001B[0m");
             System.out.println("1. Inventory");
             System.out.println("2. Orders/Sales");
             System.out.println("3. Vendors");
@@ -48,7 +47,7 @@ public class SupermarketInventory {
             clrs();
             switch (mainChoice) {
                 case 1:
-                    invMenu(scanner,catlist,prodList);
+                    invMenu(scanner,catlist,prodList,vendorList);
                     break;
                 case 2:
                     orderMenu(scanner,prodList,catlist,admin);
@@ -57,7 +56,6 @@ public class SupermarketInventory {
                     vendorMenu(scanner, vendorList, prodList, catlist);
                     break;
                 case 4:
-                    //****************CALL OUT 
                     editAdminSettings(scanner,admin);
                     break;
                 case 5:        
@@ -137,7 +135,7 @@ public class SupermarketInventory {
             }
         }while(choice != 3);
     }   
-    public static void invMenu(Scanner scanner,ArrayList<Category> catlist,ArrayList<Product> prodList){
+    public static void invMenu(Scanner scanner,ArrayList<Category> catlist,ArrayList<Product> prodList, ArrayList<Vendor> vendorList){
         clrs();
         int choice;
         do{
@@ -192,7 +190,7 @@ public class SupermarketInventory {
                 clrs();
                 break;
             case 6:
-                Product.deleteProd(prodList);
+                Product.deleteProd(scanner, prodList,vendorList);
                 clrs();
                 break;
             case 7:
@@ -281,9 +279,7 @@ public class SupermarketInventory {
             choice = 0;
             System.out.println("\u001B[33m"+"=========================\n\tInventory\n========================="+"\u001B[0m");
             System.out.println("1. Add Order");
-
-
-            System.out.println("\n2. Return to main menu");
+            System.out.println("2. Return to main menu");
         
             System.out.print("-> ");
             try {
@@ -353,7 +349,7 @@ public class SupermarketInventory {
         System.out.println("\n\u001B[33m=== SUMMARY ===\u001B[0m");
         System.out.printf("Total Inventory Value: RM %.2f\n", totalValue);  //total value of inventory
         System.out.printf("Total Number of Items: %d\n", totalItems);
-        System.out.printf("Low Stock Items (<=d): %d\n", Product.getReminderQty(),lowStockItems);
+        System.out.printf("Low Stock Items (<=%d): %d\n", Product.getReminderQty(),lowStockItems);
 
         System.out.println("\n\u001B[33m=== PRODUCT AMOUNT DISTRIBUTION ===\u001B[0m");
         barChart(categories, products, totalItems);
