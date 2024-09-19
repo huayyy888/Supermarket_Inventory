@@ -277,7 +277,7 @@ public class SupermarketInventory {
         int choice;
         do{
             choice = 0;
-            System.out.println("\u001B[33m"+"=========================\n\tInventory\n========================="+"\u001B[0m");
+            System.out.println("\u001B[33m"+"=========================\n\tOrder/Sales\n========================="+"\u001B[0m");
             System.out.println("1. Add Order");
             System.out.println("2. Return to main menu");
         
