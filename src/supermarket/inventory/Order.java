@@ -333,7 +333,7 @@ public class Order {
         System.out.println("\t\t\t ######### ## ######### ");
         System.out.println("\t\t\t### ### ## ## ### ######");
         System.out.println("\t\t\t## # ########## # ######");
-        System.out.println("\t\t\t## ####  ####   ###### #");
+        System.out.println("\t\t\t## ####  ####   ###### #");
         System.out.println("\t\t\t######## ########## ### ");
         System.out.println("\t\t\t# #### # ### ###### ####");
         System.out.println("\t\t\t# #### # #   ######  ###");
