@@ -2,6 +2,10 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
  */
+/**
+ *  AACS2204 OOPT Assignment
+ * @author TAN JIN YUAN, PATRICIA LEE HUAY, GAN KA CHUN, KER ZHENG FENG
+ */
 package supermarket.inventory;
 
 import java.io.File;
@@ -12,35 +16,38 @@ import java.util.InputMismatchException; //To handle errors
 import java.util.Scanner;
 
 /**
- *
- * @author KTYJ
+ *  AACS2204 OOPT Assignment
+ * @author TAN JIN YUAN, PATRICIA LEE HUAY, GAN KA CHUN, KER ZHENG FENG
  */
-public class Category {
-    private String catId;
-    private String catName;
+public class Category extends Item implements Categorical{
 
     //Constructor and getter/setter
     public Category(String catId, String name) {
-        this.catId = catId;
-        this.catName = name;
+        super(catId, name);
     }
-
+    
     public String getCatId() {
-        return catId;
+        return super.getId();
     }
     public void setCatId(String catId) {
-        this.catId = catId;
+        super.setId(catId);
     }
     public String getCatName() {
-        return catName;
+        return getName();
     }
-    public void setCatName(String name) {
-        this.catName = name;
+    public void setCatName(String catName) {
+        setName(catName);
+    }
+
+
+    @Override
+    public String toFileString() {
+        return super.id + "," + super.name+"\n";
     }
 
     @Override
     public String toString() {
-        return catId + "\t" + catName;
+        return String.format("%s\t%s",super.id,super.name);
     }
     
     public static ArrayList<Category> getCatList(){
@@ -249,7 +256,7 @@ public class Category {
                     break;
                 case 2:
                     if(!hasProducts){
-                        System.out.print("\u001B[32mAre you sure you want to delete this category? (y/n,default n): \u001B[0m");
+                        System.out.print("\u001B[33mAre you sure you want to delete this category? (y/n,default n): \u001B[0m");
                         if (scanner.nextLine().equalsIgnoreCase("y")) {
                             catlist.remove(cat2Edit);  // Remove from list
                             writeCat(catlist);  // Update the file
@@ -262,7 +269,7 @@ public class Category {
                 default:
                     System.out.println("\u001B[31mINVALID CHOICE! Modification Cancelled\u001B[0m");
             }
-            System.out.print("\n Do you wish to manage another category? (y/n, default no): ");
+            System.out.print("\nDo you wish to manage another category? (y/n, default no): ");
         }while(scanner.nextLine().trim().equalsIgnoreCase("y"));  
         SupermarketInventory.clrs();
    }
@@ -270,7 +277,7 @@ public class Category {
    public static void writeCat(ArrayList<Category> catlist) {
     try (FileWriter writer = new FileWriter("cat.txt")) {
         for (Category cat : catlist) {
-            writer.write(cat.getCatId() + "," + cat.getCatName() + "\n");
+            writer.write(cat.toFileString());
         }
     } catch (IOException e) {
         System.out.println("\u001B[31mError writing to cat.txt file!\u001B[0m");
@@ -280,7 +287,7 @@ public class Category {
 
 public boolean equals(Object o) {
     if (o instanceof Category) {
-        return (this.catId.equals(((Category) o).catId));
+        return (this.getCatId().equals(((Category) o).getCatId()));
     }
     else
         return false;

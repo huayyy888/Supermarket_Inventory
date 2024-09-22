@@ -1,3 +1,7 @@
+/**
+ *  AACS2204 OOPT Assignment
+ * @author TAN JIN YUAN, PATRICIA LEE HUAY, GAN KA CHUN, KER ZHENG FENG
+ */
 package supermarket.inventory;
 
 import java.io.File;
@@ -7,35 +11,35 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
 
-public class Vendor {
-    private String vendorID;
-    private String vendorName;
+public class Vendor extends Item {
+    //private String vendorID;
+    //private String vendorName;
+
     private String vendorContact;
     private String email;
     private ArrayList<Product> suppliedProducts;
     
     public Vendor(String vendorID, String vendorName, String vendorContact,String email, ArrayList<Product> suppliedProducts) {
-        this.vendorID = vendorID;
-        this.vendorName = vendorName;
+        super(vendorID, vendorName);
         this.vendorContact = vendorContact;
         this.email = email;
         this.suppliedProducts = suppliedProducts;
     }
 
     public String getVendorID() {
-        return vendorID;
+        return getId();
     }
     
     public void setVendorID(String vendorID) {
-        this.vendorID = vendorID;
+        setId(vendorID);
     }
     
     public String getVendorName() {
-        return vendorName;
+        return getName();
     }
     
     public void setVendorName(String vendorName) {
-        this.vendorName = vendorName;
+        setName(vendorName);
     }
     
     public String getVendorContact() {
@@ -63,11 +67,33 @@ public class Vendor {
     
     @Override
     public String toString() {
-        return "Vendor ID: " + vendorID + "\n" +
-               "Vendor Name: " + vendorName + "\n" +
-               "Contact: " + vendorContact + "\n" +
-               "Email: " + email;
+        return "Vendor ID: " + getId() + "\n" +
+               "Vendor Name: " + getName() + "\n" +
+               "Contact: " + this.vendorContact + "\n" +
+               "Email: " + this.email;
     }
+
+    @Override
+    public String toFileString() {
+        StringBuffer sb = new StringBuffer();
+        sb.append(getId()).append(",");
+        sb.append(getName()).append(",");
+        sb.append(this.vendorContact).append(",");
+        sb.append(this.email).append(",");
+
+        // Append supplied product IDs
+        if (!suppliedProducts.isEmpty()) {
+            for (int i = 0; i < suppliedProducts.size(); i++) {
+                sb.append(suppliedProducts.get(i).getID());
+                if (i < suppliedProducts.size() - 1) {  //if not last element, add delimiter |
+                    sb.append("|");
+                }
+            }
+        }
+        sb.append("\n");
+        return sb.toString();
+    }
+
     //////////////////////////////-------------------VENDOR DRIVER-----------------------////////////////////
 
     //------------------------SELECT PRODUCT-----------------//
@@ -258,26 +284,10 @@ public class Vendor {
 
     //write vendor list into file 
     public static void writeVendorsToFile(ArrayList<Vendor> vendorList) {
-        try {
-            FileWriter writer = new FileWriter("vendor.txt");
+        try (FileWriter writer = new FileWriter("vendor.txt")) {
             for (Vendor vendor : vendorList) {
-                String suppliedProductIDs = ""; // Create a string to store product IDs (combine product id)
-
-                // Loop through supplied products 
-                for (Product product : vendor.getSuppliedProducts()) { 
-                    if (!suppliedProductIDs.isEmpty()) {
-                        suppliedProductIDs += "|";  //write produt ID | product ID 
-                    }
-                    suppliedProductIDs += product.getID(); //combine one string if have many supplied product
-                }
-                //write vendor 
-                writer.write(vendor.getVendorID() + "," +
-                            vendor.getVendorName() + "," +
-                            vendor.getVendorContact() + "," +
-                            vendor.getEmail() + "," +
-                            suppliedProductIDs + "\n");
+               writer.write(vendor.toFileString());
             }
-            writer.close();
             System.out.println("\u001B[32mVendor file successfully updated!\033[0m");
         } catch (IOException e) {
             System.out.println("\u001B[31mvendor.txt error! Check file.!\033[0m");

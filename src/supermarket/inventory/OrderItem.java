@@ -1,3 +1,7 @@
+/**
+ *  AACS2204 OOPT Assignment
+ * @author TAN JIN YUAN, PATRICIA LEE HUAY, GAN KA CHUN, KER ZHENG FENG
+ */
 package supermarket.inventory;
 
 public class OrderItem {
