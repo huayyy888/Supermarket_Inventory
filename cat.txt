@@ -4,3 +4,4 @@ CT003,Electrics
 CT373,Beer
 CT004,Instant noodles
 CT953,Dairy products
+CT561,Cool gadgets

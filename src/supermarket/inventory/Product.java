@@ -1,6 +1,10 @@
 /*
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
+
+ *  AACS2204 OOPT Assignment
+ * @author TAN JIN YUAN, PATRICIA LEE HUAY, GAN KA CHUN, KER ZHENG FENG
+ 
  */
 package supermarket.inventory;
 
@@ -11,9 +15,10 @@ import java.util.ArrayList;
 import java.util.InputMismatchException;
 import java.util.Scanner;
 
-public class Product extends Category{
+public class Product extends Item implements Categorical{
 
-    private static int reminderQty = 5; 
+    private static int reminderQty = 5;
+
 	private String prodID;
 	private String name;
 	private double price;
@@ -45,7 +50,7 @@ public class Product extends Category{
 		this.prodID = newprodID;
 	}
 	
-        public String getName() {
+    public String getName() {
 		return this.name;
 	}
 	
@@ -68,9 +73,21 @@ public class Product extends Category{
 	public void setQty(int qty) {
 		this.qty = qty;
 	}
-	
-        
-       @Override 
+	//Categorical methods
+    public void setCatId(String catId){
+		super.setId(catId);
+	}
+	public void setCatName(String catName){
+		super.setName(catName);
+	}
+	public String getCatId(){
+		return super.getId();
+	}
+	public String getCatName(){
+		return super.getName();
+	}
+    ////////////////    
+    @Override 
        public String toString() {
         return String.format("%s\n" +
             "SKU\t:%s\n" +
@@ -79,6 +96,11 @@ public class Product extends Category{
             "Qty\t:%d\n",super.toString(),
             getID(), getName(), getPrice(),getQty());
         }
+
+    @Override
+    public String toFileString() {
+        return String.format("%s,%s,%s,%.2f,%d\n", getId(), this.id, this.name, this.price, qty);
+    }
         
         public static void createNewProduct(Scanner scanner, ArrayList<Category> categories,ArrayList<Product> productList) {
         do{
@@ -321,9 +343,9 @@ public class Product extends Category{
             }
         }
         
-        System.out.print("\nDo you want to try again? (yes/no, default is no): ");
+        System.out.print("\nDo you want to try again? (y/n, default is n): ");
         
-    } while (scanner.nextLine().trim().equalsIgnoreCase("yes"));
+    } while (scanner.nextLine().trim().equalsIgnoreCase("y"));
         
     }
     
@@ -381,11 +403,11 @@ public class Product extends Category{
                     
                 } catch (InputMismatchException e) {
                     scanner.nextLine(); // Consume the invalid input
-                        System.out.println("\u001B[31mPlease enter a VALID choice.\u001B[0m");
+                        //System.out.println("\u001B[31mPlease enter a VALID choice.\u001B[0m");
                     }   
                 if(choice == 5){    //exit
-                    System.out.print("\u001B[33m\nSave your changes and exit? (y/n, default is n): \u001B[0m");
-                    again = scanner.nextLine().trim().equalsIgnoreCase("y");
+                    System.out.print("\u001B[33m\nSave your changes and exit? (yes/no, default is no): \u001B[0m");
+                    again = scanner.nextLine().trim().equalsIgnoreCase("yes");
                 }
                 else if(choice == 1){   //category
                     System.out.println("\n\u001B[33mSELECT A NEW CATEGORY or press Enter to keep the current category:\u001B[0m");

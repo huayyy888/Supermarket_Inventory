@@ -2,7 +2,11 @@ package supermarket.inventory;
 import java.util.ArrayList;
 import java.util.InputMismatchException;
 import java.util.Scanner;
-
+/*NOTE! THIS IS DRIVER PROGRAM
+ * 
+ *  AACS2204 OOPT Assignment
+ * @author TAN JIN YUAN, PATRICIA LEE HUAY, GAN KA CHUN, KER ZHENG FENG
+ */
 public class SupermarketInventory {
     
     public static void main(String[] args) {
